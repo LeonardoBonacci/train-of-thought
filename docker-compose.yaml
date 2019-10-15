@@ -33,9 +33,9 @@ services:
       - kafkastreams-network
 
   source:
-    image: train-source:1.0
+    image: leonardobonacci/train-source:1.0
     build:
-      context: source
+      context: train-source
       dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
@@ -43,46 +43,16 @@ services:
       - kafkastreams-network
 
   at-station:
-    image: train-at-station-processor:1.0
+    image: leonardobonacci/train-at-station-processor:1.0
     build:
-      context: at-station
+      context: train-at-station-processor
       dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
     environment:
       QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
     networks:
       - kafkastreams-network
-
-  arrival-times:
-    image: train-arrival-times-processor:1.0
-    build:
-      context: arrival-times
-      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-    environment:
-      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - kafkastreams-network
-
-  history:
-    image: train-history-processor:1.0
-    build:
-      context: history
-      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-    environment:
-      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - kafkastreams-network
-
-  sink:
-    image: train-live-sink:1.0
-    build:
-      context: sink
-      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-    environment:
-      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - kafkastreams-network
-
 
 networks:
   kafkastreams-network:
     name: ks
+    
