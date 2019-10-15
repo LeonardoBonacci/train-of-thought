@@ -1,4 +1,4 @@
-package org.acme.quarkus.sample.kafkastreams.streams;
+package guru.bonacci.trains.kafkastreams.streams;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;

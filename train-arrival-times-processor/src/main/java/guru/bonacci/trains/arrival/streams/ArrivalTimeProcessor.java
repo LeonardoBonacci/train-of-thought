@@ -1,4 +1,4 @@
-package org.acme.quarkus.sample.kafkastreams.streams;
+package guru.bonacci.trains.arrival.streams;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -7,7 +7,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
@@ -34,44 +33,42 @@ public class ArrivalTimeProcessor {
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
-        JsonbSerde<ArrivalTime> busATSerde = new JsonbSerde<>(ArrivalTime.class);
-
+        JsonbSerde<ArrivalTime> trainArrivalTimeSerde = new JsonbSerde<>(ArrivalTime.class);
         
-        KStream<Integer, String> busEvents = builder.stream(                                                       
+        KStream<Integer, String> trainEvents = builder.stream(                                                       
                 TRAIN_TOPIC,
                 Consumed.with(Serdes.Integer(), Serdes.String())
         );
 
-        KStream<Integer, String> busStopEvents = builder.stream(
+        KStream<Integer, String> atStationEvents = builder.stream(
         		TRAIN_AT_STATION_TOPIC, 
         		Consumed.with(Serdes.Integer(), Serdes.String()));
 
-        busEvents.join(busStopEvents,
+        trainEvents.join(atStationEvents,
                 (leftV, rightV) -> {
-                    String[] busParts = leftV.split(";");
-                    String[] busStopParts = rightV.split(";");
+                    String[] trainParts = leftV.split(";");
+                    String[] atStationParts = rightV.split(";");
 
-                	Instant busInstant = Instant.parse(busParts[0]);
-        			Instant busStopInstant = Instant.parse(busStopParts[0]);
+                	Instant trainInstant = Instant.parse(trainParts[0]);
+        			Instant atStationInstant = Instant.parse(atStationParts[0]);
 
-                	String busName = busParts[1];
+                	String name = trainParts[1];
 
-                	String busLocation = busParts[2];
-        			String busStopLocation = busStopParts[2];
+                	Integer trainLocation = Integer.valueOf(trainParts[2]);
+                	Integer stationLocation = Integer.valueOf(atStationParts[2]);
 
-        			log.info(busName + " takes " + Duration.between(busInstant, busStopInstant).toMillis() + " ms from " + busLocation + " until arrival at " + busStopLocation);
+        			log.info(name + " takes " + Duration.between(trainInstant, atStationInstant).toMillis() + " ms from " + trainLocation + " until arrival at " + stationLocation);
 
-        			return new ArrivalTime(busName, Duration.between(busInstant, busStopInstant), Integer.valueOf(busLocation), Integer.valueOf(busStopLocation));
+        			return new ArrivalTime(name, Duration.between(trainInstant, atStationInstant), trainLocation, stationLocation);
 
                 },
                 JoinWindows.of(0).after(Duration.ofMillis(100000)),
                 Joined.with(Serdes.Integer(), Serdes.String(), Serdes.String())
         )
-        .map((busId, busAT) -> KeyValue.pair(busAT.busName + "/" + busAT.fromLoc + "/" + busAT.toLoc, busAT))
-        .peek((k, v) -> log.info(k + " <duration> " + v.untilArrival.toMillis()))
+        .peek((k, v) -> log.info(k + " <duration> " + v.getUntilArrival().toMillis()))
         .to(                                                          
         		TRAIN_ARRIVAL_TIME_TOPIC,
-                Produced.with(Serdes.String(), busATSerde)
+                Produced.with(Serdes.Integer(), trainArrivalTimeSerde)
         );
 
         return builder.build();
