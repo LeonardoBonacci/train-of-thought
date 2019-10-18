@@ -12,6 +12,9 @@ docker-compose exec ksql-cli ksql http://ksql-server:8088
 CREATE TABLE stations (id INTEGER, location STRING) WITH (KAFKA_TOPIC = 'train-stations', VALUE_FORMAT='JSON', KEY = 'id');
 SET 'auto.offset.reset'='earliest';
 
-CREATE STREAM trevents (id INTEGER, name STRING, moment STRING, location STRING) WITH (KAFKA_TOPIC = 'train-events', VALUE_FORMAT = 'json');
+CREATE STREAM tr_events (id INTEGER, name STRING, moment BIGINT, location INTEGER) WITH (KAFKA_TOPIC = 'train-events', VALUE_FORMAT = 'JSON', KEY='id', TIMESTAMP='moment');
 
-SELECT * FROM trevents;
+SELECT * FROM tr_events;
+
+
+CREATE STREAM tr_at_stations AS SELECT * FROM tr_events WHERE location % 5 = 0 PARTITION BY id;

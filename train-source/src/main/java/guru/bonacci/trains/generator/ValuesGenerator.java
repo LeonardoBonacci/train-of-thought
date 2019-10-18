@@ -78,7 +78,7 @@ public class ValuesGenerator {
                     String payload = 
                     		 "{ \"id\" : " + train.id +
                              ", \"name\" : \"" + train.name + "\"" + 
-                             ", \"moment\" : \"" + Instant.now() + "\"" + 
+                             ", \"moment\" : \"" + Instant.now().toEpochMilli() + "\"" + 
                              ", \"location\" : \"" + stepCounter.get(train) + "\" }";
 
                     log.info("emitting train event: {}", payload);
