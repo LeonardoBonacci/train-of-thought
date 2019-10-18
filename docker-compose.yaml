@@ -13,6 +13,7 @@ services:
       LOG_DIR: /tmp/logs
     networks:
       - kafkastreams-network
+
   kafka:
     image: strimzi/kafka:0.11.3-kafka-2.1.0
     command: [
@@ -32,6 +33,25 @@ services:
     networks:
       - kafkastreams-network
 
+  ksql-server:
+    image: confluentinc/cp-ksql-server:5.1.0
+    depends_on:
+      - kafka
+    environment:
+      KSQL_BOOTSTRAP_SERVERS: kafka:9092
+      KSQL_LISTENERS: http://0.0.0.0:8088
+    networks:
+      - kafkastreams-network
+  
+  ksql-cli:
+    image: confluentinc/cp-ksql-cli:5.1.0
+    depends_on:
+      - ksql-server
+    entrypoint: /bin/sh
+    tty: true
+    networks:
+      - kafkastreams-network
+      
   source:
     image: leonardobonacci/train-source:1.0
     build:
@@ -42,25 +62,25 @@ services:
     networks:
       - kafkastreams-network
 
-  at-station:
-    image: leonardobonacci/train-at-station-processor:1.0
-    build:
-      context: train-at-station-processor
-      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-    environment:
-      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - kafkastreams-network
+#  at-station:
+#    image: leonardobonacci/train-at-station-processor:1.0
+#    build:
+#      context: train-at-station-processor
+#      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+#    environment:
+#      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
+#    networks:
+#      - kafkastreams-network
 
-  arrival-times:
-    image: leonardobonacci/train-arrival-times-processor:1.0
-    build:
-      context: train-arrival-times-processor
-      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-    environment:
-      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - kafkastreams-network
+#  arrival-times:
+#    image: leonardobonacci/train-arrival-times-processor:1.0
+#    build:
+#      context: train-arrival-times-processor
+#      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+#    environment:
+#      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
+#    networks:
+#      - kafkastreams-network
 
 networks:
   kafkastreams-network:
