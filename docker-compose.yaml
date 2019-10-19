@@ -51,7 +51,15 @@ services:
     tty: true
     networks:
       - kafkastreams-network
-      
+
+  tile38:
+    image: tile38/tile38
+    ports:
+      - "9851:9851"
+    networks:
+      - kafkastreams-network
+
+
   source:
     image: leonardobonacci/train-source:1.0
     build:
