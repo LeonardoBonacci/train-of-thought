@@ -1,12 +1,21 @@
 # no-more-running-for-trains
 
-Thanks guys for writing this: https://quarkus.io/guides/kafka-streams-guide
+https://quarkus.io/guides/kafka-streams-guide
+https://redis.io/topics/protocol
+https://tile38.com/
+https://github.com/lettuce-io/lettuce-core/wiki/Custom-commands,-outputs-and-command-mechanics
+https://tile38.com/topics/replication/
 
 Some useful commands:
 
-docker run --tty --rm -i --network ks debezium/tooling:1.0
-kafkacat -b kafka:9092 -C -o beginning -q -t train-stations
+>>> MVN
+mvn clean package -f train-source/pom.xml
 
+>> KAFKACAAT
+docker run --tty --rm -i --network ks debezium/tooling:1.0
+kafkacat -b kafka:9092 -C -o beginning -q -t trains_at_stations
+
+>> KSQL
 docker-compose exec ksql-cli ksql http://ksql-server:8088
 
 CREATE TABLE stations (id INTEGER, location STRING) WITH (KAFKA_TOPIC = 'train-stations', VALUE_FORMAT='JSON', KEY = 'id');
@@ -19,11 +28,7 @@ SELECT * FROM tr_events LEFT JOIN stations ON true WHERE location % 5 = 0;
 
 CREATE STREAM tr_at_stations AS SELECT * FROM tr_events WHERE location % 5 = 0 LEFT JOIN users ON true PARTITION BY id;
 
+>> TILE38
+docker run --net=host -it tile38/tile38 tile38-cli
 
-docker run --net=ks -it tile38/tile38 tile38-cli
-
-SETHOOK s1 kafka://kafka:9092/stations NEARBY trains FENCE POINT 33.462 -112.268 6000
-SETHOOK s2 kafka://kafka:9092/stations NEARBY trains FENCE POINT 52.3667 4.8945 10000
-
-SET trains 14 POINT 33.462 -112.268
-SET trains 12 POINT 52.3667 4.8945
+SETHOOK trains_at_stations kafka://kafka:9092/trains_at_stations NEARBY trains FENCE ROAM stations * 10

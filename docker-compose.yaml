@@ -33,26 +33,26 @@ services:
     networks:
       - kafkastreams-network
 
-  ksql-server:
-    image: confluentinc/cp-ksql-server:5.1.0
-    depends_on:
-      - kafka
-    environment:
-      KSQL_BOOTSTRAP_SERVERS: kafka:9092
-      KSQL_LISTENERS: http://0.0.0.0:8088
-    networks:
-      - kafkastreams-network
+#  ksql-server:
+#    image: confluentinc/cp-ksql-server:5.1.0
+#    depends_on:
+#      - kafka
+#    environment:
+#      KSQL_BOOTSTRAP_SERVERS: kafka:9092
+#      KSQL_LISTENERS: http://0.0.0.0:8088
+#    networks:
+#      - kafkastreams-network
   
-  ksql-cli:
-    image: confluentinc/cp-ksql-cli:5.1.0
-    depends_on:
-      - ksql-server
-    entrypoint: /bin/sh
-    tty: true
-    networks:
-      - kafkastreams-network
+#  ksql-cli:
+#    image: confluentinc/cp-ksql-cli:5.1.0
+#    depends_on:
+#      - ksql-server
+#    entrypoint: /bin/sh
+#    tty: true
+#    networks:
+#      - kafkastreams-network
 
-  tile38:
+  tile-server:
     image: tile38/tile38
     ports:
       - "9851:9851"
@@ -62,6 +62,8 @@ services:
 
   source:
     image: leonardobonacci/train-source:1.0
+    depends_on:
+      - tile-server
     build:
       context: train-source
       dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}

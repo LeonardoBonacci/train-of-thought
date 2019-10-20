@@ -4,20 +4,27 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
-import com.google.common.collect.Maps;
+import com.lambdaworks.redis.RedisClient;
+import com.lambdaworks.redis.api.StatefulRedisConnection;
+import com.lambdaworks.redis.api.sync.RedisCommands;
+import com.lambdaworks.redis.codec.StringCodec;
+import com.lambdaworks.redis.output.StatusOutput;
+import com.lambdaworks.redis.protocol.CommandArgs;
+import com.lambdaworks.redis.protocol.CommandType;
 
+import io.quarkus.runtime.StartupEvent;
 import io.reactivex.Flowable;
 import io.smallrye.reactive.messaging.kafka.KafkaMessage;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,85 +38,113 @@ import lombok.extern.slf4j.Slf4j;
 public class ValuesGenerator {
 
 
-    private Random random = new Random();
-
     private List<Station> stations = Collections.unmodifiableList(
-            Arrays.asList(
-                    new Station(1, "0"),
-                    new Station(2, "5"),
-                    new Station(3, "10"),
-                    new Station(4, "15"),
-                    new Station(5, "20"),
-                    new Station(6, "25"),
-                    new Station(7, "30"),
-                    new Station(8, "35"),
-                    new Station(9, "40"),
-                    new Station(10, "42")
+            Arrays.asList( 
+                    Station.builder().id("jv").name("Johnsonville Station").lat(33.01).lon(-115.01).build(),
+                    Station.builder().id("rar").name("Raroa Station").lat(33.02).lon(-115.02).build(),
+                    Station.builder().id("kha").name("Khandallah Station").lat(33.03).lon(-115.03).build(),
+                    Station.builder().id("boh").name("Box Hill Station").lat(33.04).lon(-115.04).build(),
+                    Station.builder().id("sim").name("Simla Crescent Station").lat(33.05).lon(-115.05).build(),
+                    Station.builder().id("awa").name("Awarua Street Station").lat(33.06).lon(-115.06).build(),
+            		Station.builder().id("ng").name("Ngaio Station").lat(33.07).lon(-115.07).build(),
+            		Station.builder().id("cdo").name("Crofton Downs Station").lat(33.08).lon(-115.08).build(),
+            		Station.builder().id("wel").name("Wellington Station").lat(33.09).lon(-115.09).build()
             ));
 
+
+     void onStart(@Observes StartupEvent ev) {
+         log.info("Application has started");
+         RedisClient client = RedisClient.create("redis://tile-server:9851");
+         StatefulRedisConnection<String, String> connection = client.connect();
+         RedisCommands<String, String> sync = connection.sync();
+         StringCodec codec = StringCodec.UTF8;
+
+         stations.forEach(st -> {
+	         sync.dispatch(CommandType.SET,
+	                     new StatusOutput<>(codec), new CommandArgs<>(codec)
+	                             .add("stations") // collection name
+	                             .add(st.name)
+	                             .add("POINT")
+	                             .add(st.lat)
+	                             .add(st.lon));
+	
+	         String tileResp = sync.dispatch(CommandType.GET,
+	                 new StatusOutput<>(codec), new CommandArgs<>(codec)
+	                         .add("stations")
+	                         .add(st.name));
+	         log.info(tileResp);
+         });
+     }
+
+
+     private Random random = new Random();
 
      private List<Train> trains = Collections.unmodifiableList(
-            Arrays.asList(
-                    new Train(1, "To nowhere"),
-                    new Train(2, "To heaven"),
-                    new Train(3, "To hell"),
-                    new Train(4, "To left"),
-                    new Train(5, "To right"),
-                    new Train(6, "To straight ahead"),
-                    new Train(7, "To backwards"),
-                    new Train(8, "To up"),
-                    new Train(9, "To down"),
-                    new Train(10, "To inside"),
-                    new Train(11, "Trem das onze")
-            ));
+             Arrays.asList(Train.builder().id(UUID.randomUUID().toString()).name("JVL-WEL").lat(33.01).lon(-115.01).build())
+     		);
 
-    @Outgoing("train-events")                             
-    public Flowable<KafkaMessage<Integer, String>> generate() {
-
-    	final Map<Train, Integer> stepCounter = Maps.newHashMap();
-    	trains.forEach(tr -> stepCounter.put(tr, 0));
-    	
-        return Flowable.interval(500, TimeUnit.MILLISECONDS)    
+     
+     @Outgoing("train-events")                             
+     public Flowable<KafkaMessage<String, String>> generate() {
+        return Flowable.interval(1, TimeUnit.SECONDS)    
                 .onBackpressureDrop()
                 .map(tick -> {
                     Train train = trains.get(random.nextInt(trains.size()));
-
-                    stepCounter.compute(train, (b, counter)-> new Integer(counter.intValue() + 1));
+                	train.lat += 0.001;
+                	train.lon -= 0.001;
+                	log.info("new coords " + train.lat + ":" + train.lon);
+                	
                     String payload = 
                     		 "{ \"id\" : " + train.id +
                              ", \"name\" : \"" + train.name + "\"" + 
                              ", \"moment\" : \"" + Instant.now().toEpochMilli() + "\"" + 
-                             ", \"location\" : \"" + stepCounter.get(train) + "\" }";
+                             ", \"lat\" : " + train.lat + 
+                             ", \"lon\" : " + train.lon + "}";
+
+                    // ----------------------------------------------------
+                    // FOR NOW WE SEND THE TRAIN EVENT STRAIGHT TO THE tile38-server
+                    RedisClient client = RedisClient.create("redis://tile-server:9851");
+                    StatefulRedisConnection<String, String> connection = client.connect();
+                    RedisCommands<String, String> sync = connection.sync();
+
+                    StringCodec codec = StringCodec.UTF8;
+                    sync.dispatch(CommandType.SET,
+                                new StatusOutput<>(codec), new CommandArgs<>(codec)
+                                        .add("trains") // collection name
+                                        .add(train.id)
+                                        .add("POINT")
+                                        .add(train.lat)
+                                        .add(train.lon));
+
+                    String tileResponse = sync.dispatch(CommandType.GET,
+                            new StatusOutput<>(codec), new CommandArgs<>(codec)
+                                    .add("trains")
+                                    .add(train.id));
+
+                    log.info(tileResponse);
+                    // ----------------------------------------------------
 
                     log.info("emitting train event: {}", payload);
                     return KafkaMessage.of(train.id, payload);
                 });
     }
 
-    @Outgoing("train-stations")                               
-    public Flowable<KafkaMessage<Integer, String>> trainStations() {
-        List<KafkaMessage<Integer, String>> stationsAsJson = stations.stream()
-            .map(s -> KafkaMessage.of(
-                    s.id,
-                    "{ \"id\" : " + s.id +
-                    ", \"location\" : \"" + s.location + "\" }"))
-            .collect(Collectors.toList());
 
-        return Flowable.fromIterable(stationsAsJson);
-    };
-    
-    
-    @RequiredArgsConstructor
+    @Builder
     private static class Train {
 
-        private final int id;
+        private final String id;
         private final String name;
+        private Double lat;
+        private Double lon;
     }
 
-    @RequiredArgsConstructor
+    @Builder
     private static class Station {
 
-        private final int id;
-        private final String location; 
+        private final String id;
+        private final String name;
+        private final Double lat;
+        private final Double lon;
     }
 }
