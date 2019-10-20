@@ -1,6 +1,8 @@
 # no-more-running-for-trains
 
 https://quarkus.io/guides/kafka-streams-guide
+https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
+http://karols.github.io/blog/2019/05/12/native-image-on-windows-10-x64/
 https://redis.io/topics/protocol
 https://tile38.com/
 https://github.com/lettuce-io/lettuce-core/wiki/Custom-commands,-outputs-and-command-mechanics

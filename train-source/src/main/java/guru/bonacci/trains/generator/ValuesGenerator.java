@@ -29,8 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * A bean producing random temperature data every second.
- * The values are written to a Kafka topic (train-events).
- * Another topic contains the name of the train stations (train-stations).
+ * The values are written to a Kafka topic (i-am-here).
  * The Kafka configuration is specified in the application configuration.
  */
 @Slf4j
@@ -77,23 +76,22 @@ public class ValuesGenerator {
      }
 
 
-     private Random random = new Random();
+     Random random = new Random();
 
-     private List<Train> trains = Collections.unmodifiableList(
-             Arrays.asList(Train.builder().id(UUID.randomUUID().toString()).name("JVL-WEL").lat(33.01).lon(-115.01).build())
+     List<Train> trains = Collections.unmodifiableList(
+             Arrays.asList(Train.builder().id(UUID.randomUUID().toString())
+            		 						.name("JVL-WEL")
+            		 						.lat(stations.get(0).lat - 0.02)
+            		 						.lon(stations.get(0).lon + 0.02)
+            		 						.build())
      		);
 
-     
-     @Outgoing("train-events")                             
+     @Outgoing("i-am-here")                             
      public Flowable<KafkaMessage<String, String>> generate() {
-        return Flowable.interval(1, TimeUnit.SECONDS)    
+        return Flowable.interval(200, TimeUnit.MILLISECONDS)    
                 .onBackpressureDrop()
                 .map(tick -> {
-                    Train train = trains.get(random.nextInt(trains.size()));
-                	train.lat += 0.001;
-                	train.lon -= 0.001;
-                	log.info("new coords " + train.lat + ":" + train.lon);
-                	
+                    Train train = moveAhead(trains.get(random.nextInt(trains.size())));
                     String payload = 
                     		 "{ \"id\" : " + train.id +
                              ", \"name\" : \"" + train.name + "\"" + 
@@ -115,13 +113,6 @@ public class ValuesGenerator {
                                         .add("POINT")
                                         .add(train.lat)
                                         .add(train.lon));
-
-                    String tileResponse = sync.dispatch(CommandType.GET,
-                            new StatusOutput<>(codec), new CommandArgs<>(codec)
-                                    .add("trains")
-                                    .add(train.id));
-
-                    log.info(tileResponse);
                     // ----------------------------------------------------
 
                     log.info("emitting train event: {}", payload);
@@ -129,22 +120,28 @@ public class ValuesGenerator {
                 });
     }
 
+     private Train moveAhead(Train t) {
+      	t.lat += 0.0002;
+      	t.lon -= 0.0002;
+      	return t;
+      }
+      
 
-    @Builder
-    private static class Train {
+     @Builder
+     private static class Train {
 
-        private final String id;
-        private final String name;
-        private Double lat;
-        private Double lon;
-    }
+    	 private final String id;
+    	 private final String name;
+    	 private Double lat;
+    	 private Double lon;
+     }
 
-    @Builder
-    private static class Station {
+     @Builder
+     private static class Station {
 
-        private final String id;
-        private final String name;
-        private final Double lat;
-        private final Double lon;
-    }
+    	 private final String id;
+    	 private final String name;
+    	 private final Double lat;
+    	 private final Double lon;
+     }
 }
