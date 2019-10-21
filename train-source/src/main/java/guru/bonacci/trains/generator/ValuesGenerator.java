@@ -29,14 +29,18 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * A bean producing random temperature data every second.
- * The values are written to a Kafka topic (i-am-here).
+ * The values are written to a Kafka topic (I_AM_HERE).
  * The Kafka configuration is specified in the application configuration.
  */
 @Slf4j
 @ApplicationScoped
 public class ValuesGenerator {
 
-
+	private final static double startLat = 32.99;
+	private final static double startLon = -114.99;
+	private final static double stopLat = 34.01;
+	private final static double stopLon = -115.11;
+	
     private List<Station> stations = Collections.unmodifiableList(
             Arrays.asList( 
                     Station.builder().id("jv").name("Johnsonville Station").lat(33.01).lon(-115.01).build(),
@@ -61,7 +65,7 @@ public class ValuesGenerator {
          stations.forEach(st -> {
 	         sync.dispatch(CommandType.SET,
 	                     new StatusOutput<>(codec), new CommandArgs<>(codec)
-	                             .add("stations") // collection name
+	                             .add("stations") // internal collection name
 	                             .add(st.name)
 	                             .add("POINT")
 	                             .add(st.lat)
@@ -81,21 +85,21 @@ public class ValuesGenerator {
      List<Train> trains = Collections.unmodifiableList(
              Arrays.asList(Train.builder().id(UUID.randomUUID().toString())
             		 						.name("JVL-WEL")
-            		 						.lat(stations.get(0).lat - 0.02)
-            		 						.lon(stations.get(0).lon + 0.02)
+            		 						.lat(startLat)
+            		 						.lon(startLon)
             		 						.build())
      		);
 
-     @Outgoing("i-am-here")                             
+     @Outgoing("I_AM_HERE")                             
      public Flowable<KafkaMessage<String, String>> generate() {
-        return Flowable.interval(200, TimeUnit.MILLISECONDS)    
+        return Flowable.interval(300, TimeUnit.MILLISECONDS)    
                 .onBackpressureDrop()
                 .map(tick -> {
                     Train train = moveAhead(trains.get(random.nextInt(trains.size())));
                     String payload = 
                      		 "{ \"id\" : " + train.id +
                              ", \"name\" : \"" + train.name + "\"" + 
-                             ", \"moment\" : \"" + Instant.now().toEpochMilli() + "\"" + 
+							 ", \"moment\" : \"" + Instant.now() + "\"" + 
                              ", \"lat\" : " + train.lat + 
                              ", \"lon\" : " + train.lon + "}";
 
@@ -108,23 +112,24 @@ public class ValuesGenerator {
                     StringCodec codec = StringCodec.UTF8;
                     sync.dispatch(CommandType.SET,
                                 new StatusOutput<>(codec), new CommandArgs<>(codec)
-                                        .add("trains") // collection name
+                                        .add("trains") // internal collection name
                                         .add(train.id)
                                         .add("POINT")
                                         .add(train.lat)
                                         .add(train.lon));
                     // ----------------------------------------------------
 
+                    log.info("emitting train event: {}", payload);
                     return KafkaMessage.of(train.id, payload);
-                    
-//                    return KafkaMessage.of(train.id, train.name + ";" + Instant.now().toEpochMilli() + ";" + train.lat + ";" + train.lon);
                 });
     }
 
      private Train moveAhead(Train t) {
-      	t.lat += 0.0002;
-      	t.lon -= 0.0002;
-      	return t;
+    	 if (t.lat >= stopLat)
+			 t.lat += 0.0002;
+    	 if (t.lon <= stopLon)
+      		t.lon -= 0.0002;
+    	 return t;
       }
       
 
