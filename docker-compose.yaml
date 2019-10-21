@@ -60,38 +60,27 @@ services:
     networks:
       - kafkastreams-network
 
-
   source:
     image: leonardobonacci/train-source:1.0
     depends_on:
       - tile-server
     build:
-      context: train-source
+      context: source
       dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     networks:
       - kafkastreams-network
 
-#  at-station:
-#    image: leonardobonacci/train-at-station-processor:1.0
-#    build:
-#      context: train-at-station-processor
-#      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-#    environment:
-#      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-#    networks:
-#      - kafkastreams-network
-
-#  arrival-times:
-#    image: leonardobonacci/train-arrival-times-processor:1.0
-#    build:
-#      context: train-arrival-times-processor
-#      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-#    environment:
-#      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-#    networks:
-#      - kafkastreams-network
+  arrivals:
+    image: leonardobonacci/train-arrival-processor:1.0
+    build:
+      context: arrival-processor
+      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+    environment:
+      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - kafkastreams-network
 
 networks:
   kafkastreams-network:
