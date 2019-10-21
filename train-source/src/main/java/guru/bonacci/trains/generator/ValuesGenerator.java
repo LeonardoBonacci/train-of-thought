@@ -93,7 +93,7 @@ public class ValuesGenerator {
                 .map(tick -> {
                     Train train = moveAhead(trains.get(random.nextInt(trains.size())));
                     String payload = 
-                    		 "{ \"id\" : " + train.id +
+                     		 "{ \"id\" : " + train.id +
                              ", \"name\" : \"" + train.name + "\"" + 
                              ", \"moment\" : \"" + Instant.now().toEpochMilli() + "\"" + 
                              ", \"lat\" : " + train.lat + 
@@ -115,8 +115,9 @@ public class ValuesGenerator {
                                         .add(train.lon));
                     // ----------------------------------------------------
 
-                    log.info("emitting train event: {}", payload);
                     return KafkaMessage.of(train.id, payload);
+                    
+//                    return KafkaMessage.of(train.id, train.name + ";" + Instant.now().toEpochMilli() + ";" + train.lat + ";" + train.lon);
                 });
     }
 

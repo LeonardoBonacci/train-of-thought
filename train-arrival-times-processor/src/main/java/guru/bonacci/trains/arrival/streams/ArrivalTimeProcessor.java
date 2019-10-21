@@ -25,8 +25,8 @@ public class ArrivalTimeProcessor {
 
     private static final String TRAIN_ARRIVAL_TIME_TOPIC = "train-arrival-time-events";
     
-    private static final String TRAIN_TOPIC = "train-events";
-    private static final String TRAIN_AT_STATION_TOPIC = "train-at-station-events";
+    private static final String TRAIN_TOPIC = "i-am-here";
+    private static final String TRAIN_AT_STATION_TOPIC = "i-have-arrived";
 
 
     @Produces
@@ -37,12 +37,12 @@ public class ArrivalTimeProcessor {
         
         KStream<Integer, String> trainEvents = builder.stream(                                                       
                 TRAIN_TOPIC,
-                Consumed.with(Serdes.Integer(), Serdes.String())
+                Consumed.with(Serdes.String(), Serdes.String())
         );
 
         KStream<Integer, String> atStationEvents = builder.stream(
         		TRAIN_AT_STATION_TOPIC, 
-        		Consumed.with(Serdes.Integer(), Serdes.String()));
+        		Consumed.with(Serdes.String(), Serdes.String()));
 
         trainEvents.join(atStationEvents,
                 (leftV, rightV) -> {

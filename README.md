@@ -8,29 +8,38 @@ https://tile38.com/
 https://github.com/lettuce-io/lettuce-core/wiki/Custom-commands,-outputs-and-command-mechanics
 https://tile38.com/topics/replication/
 
+https://docs.confluent.io/current/ksql/docs/developer-guide/create-a-stream.html
+
 Some useful commands:
 
 >>> MVN
-mvn clean package -f train-source/pom.xml
+mvn clean package -f train-source/pom.xml ; docker-compose up --build
+
 
 >> KAFKACAAT
 docker run --tty --rm -i --network ks debezium/tooling:1.0
 kafkacat -b kafka:9092 -C -o beginning -q -t trains_at_stations
+kafkacat -b kafka:9092 -C -o beginning -q -t trains_at_stations -f "%k\n"
 
+ 
 >> KSQL
 docker-compose exec ksql-cli ksql http://ksql-server:8088
 
-CREATE TABLE stations (id INTEGER, location STRING) WITH (KAFKA_TOPIC = 'train-stations', VALUE_FORMAT='JSON', KEY = 'id');
+PRINT 'trains_at_stations' FROM BEGINNING;
+
 SET 'auto.offset.reset'='earliest';
+CREATE STREAM inner_tas (id STRING, fields MAP<STRING,STRING>) WITH (KAFKA_TOPIC = 'trains_at_stations', VALUE_FORMAT = 'JSON');
+SHOW TOPICS;
+PRINT 'inner_tas' FROM BEGINNING;        
 
-CREATE STREAM tr_events (id INTEGER, name STRING, moment BIGINT, location INTEGER) WITH (KAFKA_TOPIC = 'train-events', VALUE_FORMAT = 'JSON', KEY='id', TIMESTAMP='moment');
+CREATE STREAM i_have_arrived AS SELECT id, fields['MOMENT'] AS moment FROM inner_tas PARTITION BY id;
 
-SELECT * FROM tr_events;
-SELECT * FROM tr_events LEFT JOIN stations ON true WHERE location % 5 = 0; 
-
-CREATE STREAM tr_at_stations AS SELECT * FROM tr_events WHERE location % 5 = 0 LEFT JOIN users ON true PARTITION BY id;
 
 >> TILE38
 docker run --net=host -it tile38/tile38 tile38-cli
-
 SETHOOK trains_at_stations kafka://kafka:9092/trains_at_stations NEARBY trains FENCE ROAM stations * 10
+
+SET stations JV POINT 33.01 -115.01
+SET trains FOO123BAR FIELD SPEED 90 POINT 33.01 -115.01
+
+SET trains 123 FIELD SPEED 90 POINT 33.01 -115.01
