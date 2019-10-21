@@ -28,6 +28,12 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>biz.paluch.redis</groupId>
+			<artifactId>lettuce</artifactId>
+			<version>5.0.0.Beta1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy</artifactId>
 		</dependency>
