@@ -36,10 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class ValuesGenerator {
 
-	private final static double startLat = 32.99;
-	private final static double stopLat = 34.01;
-	private final static double startLon = -114.99;
-	private final static double stopLon = -115.11;
+	private final static double START_LAT = 33.00;
+	private final static double START_LON = -115.00;
 	
     private List<Station> stations = Collections.unmodifiableList(
             Arrays.asList( 
@@ -83,16 +81,16 @@ public class ValuesGenerator {
      Random random = new Random();
 
      List<Train> trains = Collections.unmodifiableList(
-             Arrays.asList(Train.builder().id("some random id")
+             Arrays.asList(Train.builder().id(UUID.randomUUID().toString())
             		 						.name("JVL-WEL")
-            		 						.lat(startLat)
-            		 						.lon(startLon)
+            		 						.lat(START_LAT)
+            		 						.lon(START_LON)
             		 						.build())
      		);
 
-     @Outgoing("I_AM_HERE")                             
+     @Outgoing("i-am-here")                             
      public Flowable<KafkaMessage<String, String>> trainEvents() {
-        return Flowable.interval(300, TimeUnit.MILLISECONDS)    
+        return Flowable.interval(500, TimeUnit.MILLISECONDS)    
                 .onBackpressureDrop()
                 .map(tick -> {
                     Train train = moveAhead(trains.get(random.nextInt(trains.size())));
@@ -122,27 +120,11 @@ public class ValuesGenerator {
                     log.info("emitting train event: {}", payload);
                     return KafkaMessage.of(train.id, payload);
                 });
-    }
-
-     @Outgoing("I_AM_HOME")                             
-     public Flowable<KafkaMessage<String, String>> arrived() {
-        return Flowable.interval(3000, TimeUnit.MILLISECONDS)    
-                .onBackpressureDrop()
-                .map(tick -> {
-                    String payload = 
-                     		 "{ \"id\" : \"some random id\"" + 
-							 ", \"moment\" : \"" + Instant.now() + "\"}";
-
-                    log.info("temp arrived event: {}", payload);
-                    return KafkaMessage.of("some random id", payload);
-                });
-    }
+     }
 
      private Train moveAhead(Train t) {
-    	 if (t.lat <= stopLat)
-			 t.lat += 0.0002;
-    	 if (t.lon >= stopLon)
-      		t.lon -= 0.0002;
+		 t.lat += 0.0003;
+		 t.lon -= 0.0003;
     	 return t;
       }
       

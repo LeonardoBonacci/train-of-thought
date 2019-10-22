@@ -9,6 +9,6 @@ import lombok.ToString;
 @RegisterForReflection
 public class ArrivedAt {
 
-    public String id;
+    public String ID;
     public Instant moment;
 }

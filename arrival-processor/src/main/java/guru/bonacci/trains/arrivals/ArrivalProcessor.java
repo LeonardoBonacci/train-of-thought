@@ -1,7 +1,6 @@
 package guru.bonacci.trains.arrivals;
 
 import java.time.Duration;
-import java.time.Instant;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -22,10 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ArrivalProcessor {
 
 
-    private static final String TRAIN_ARRIVAL_TIME_TOPIC = "BACK_TO_THE_FUTURE";
+    private static final String TRAIN_ARRIVAL_TIME_TOPIC = "back-to-the-future";
     
-    private static final String TRAINS = "I_AM_HERE";
-    private static final String TRAINS_AT_STATIONS = "I_AM_HOME";
+    private static final String TRAINS = "i-am-here";
+    private static final String AT_STATIONS = "i-am-home";
 
 
     @Produces
@@ -41,21 +40,21 @@ public class ArrivalProcessor {
         );
 
         KStream<String, ArrivedAt> atStations = builder.stream(
-        		TRAINS_AT_STATIONS, 
+        		AT_STATIONS, 
         		Consumed.with(Serdes.String(), atStationSerde));
 
         trains.join(atStations,
                 (trainVal, atStationVal) -> {
-        			log.info("{} needs {} ms from [{},{}] until a station", 
+        			log.info("{} needs {} ms from [{},{}] until station...?", 
         					trainVal.name, 
         					Duration.between(trainVal.moment, atStationVal.moment).toMillis(),
         					trainVal.lat,
         					trainVal.lon);
 
-        			return new TrainArrivalEvent(trainVal.name, Duration.between(trainVal.moment, atStationVal.moment));
+        			return new TrainArrivalEvent(trainVal.name, trainVal.moment, atStationVal.moment);
 
                 },
-                JoinWindows.of(0).after(Duration.ofMillis(1000)), //add a realistic value here!
+                JoinWindows.of(0).after(Duration.ofMillis(10000)), //add a realistic value here!
                 Joined.with(Serdes.String(), trainSerde, atStationSerde)
         );
 //        .to(                                                          
