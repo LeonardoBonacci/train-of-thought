@@ -1,4 +1,14 @@
-# no-more-running-for-trains
+# no more need to run for trains!
+
+##MANUAL STEPS (for now..)
+docker run --net=host -it tile38/tile38 tile38-cli
+SETHOOK trains_at_stations kafka://kafka:9092/i-have-arrived NEARBY trains FENCE ROAM stations * 50
+
+docker-compose exec ksql-cli ksql http://ksql-server:8088
+SET 'ksql.sink.partitions'='3';
+CREATE STREAM "arahants" (id STRING, time STRING, nearby MAP<STRING,STRING>) WITH (KAFKA_TOPIC = 'i-have-arrived', VALUE_FORMAT = 'JSON');
+CREATE STREAM "i-am-home" AS SELECT id, time as "moment", nearby['id'] AS "station" FROM "arahants" WHERE nearby IS NOT NULL PARTITION BY id;
+
 
 https://quarkus.io/guides/kafka-streams-guide
 https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
@@ -13,12 +23,13 @@ https://docs.confluent.io/current/ksql/docs/developer-guide/create-a-stream.html
 Some useful commands:
 
 >>> MVN
-mvn clean package -f train-source/pom.xml ; docker-compose up --build
+mvn clean package -f source/pom.xml ; docker-compose up --build
+mvn clean package -f arrival-processor/pom.xml ; docker-compose up --build
 
 
 >> KAFKACAAT
 docker run --tty --rm -i --network ks debezium/tooling:1.0
-kafkacat -b kafka:9092 -C -o beginning -q -t I_HAVE_ARRIVED
+kafkacat -b kafka:9092 -C -o beginning -q -t i-am-home
 kafkacat -b kafka:9092 -C -o beginning -q -t I_HAVE_ARRIVED -f "%k\n"
 
  
