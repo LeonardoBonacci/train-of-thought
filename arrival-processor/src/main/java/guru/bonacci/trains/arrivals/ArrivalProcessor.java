@@ -12,6 +12,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.JoinWindows;
 import org.apache.kafka.streams.kstream.Joined;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Produced;
 
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ArrivalProcessor {
 
 
-    private static final String TRAIN_ARRIVAL_TIME_TOPIC = "back-to-the-future";
+    private static final String UNTIL_ARRIVAL = "back-to-the-future";
     
     private static final String TRAINS = "i-am-here";
     private static final String AT_STATIONS = "i-am-home";
@@ -41,26 +42,37 @@ public class ArrivalProcessor {
 
         KStream<String, ArrivedAt> atStations = builder.stream(
         		AT_STATIONS, 
-        		Consumed.with(Serdes.String(), atStationSerde));
+        		Consumed.with(Serdes.String(), atStationSerde)
+        );
 
         trains.join(atStations,
                 (trainVal, atStationVal) -> {
-        			log.info("{} needs {} ms from [{},{}] until station...?", 
+        			log.info("{} needs {} ms from [{},{}] until station {}", 
         					trainVal.name, 
         					Duration.between(trainVal.moment, atStationVal.moment).toMillis(),
         					trainVal.lat,
-        					trainVal.lon);
+        					trainVal.lon,
+        					atStationVal.station);
 
-        			return new TrainArrivalEvent(trainVal.name, trainVal.moment, atStationVal.moment);
+        			return TrainArrivalEvent.builder()
+        									.id(trainVal.id)
+        									.name(trainVal.name)
+        									.lat(trainVal.lat)
+        									.lon(trainVal.lon)
+        									.until(Duration.between(trainVal.moment, atStationVal.moment).toMillis())
+        									.station(atStationVal.station)
+        									.build();
 
                 },
                 JoinWindows.of(0).after(Duration.ofMillis(10000)), //add a realistic value here!
                 Joined.with(Serdes.String(), trainSerde, atStationSerde)
+        )
+//        .print(Printed.<String, TrainArrivalEvent>toSysOut().withLabel("BLABLABLA"))
+        .peek((k,v) -> log.info("BLA " + v))
+        .to(                                                          
+        		UNTIL_ARRIVAL,
+                Produced.with(Serdes.String(), new JsonbSerde<>(TrainArrivalEvent.class))
         );
-//        .to(                                                          
-//        		TRAIN_ARRIVAL_TIME_TOPIC,
-//                Produced.with(Serdes.Integer(), trainArrivalTimeSerde)
-//        );
 
         return builder.build();
     }

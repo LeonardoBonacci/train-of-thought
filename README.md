@@ -2,12 +2,12 @@
 
 ##MANUAL STEPS (for now..)
 docker run --net=host -it tile38/tile38 tile38-cli
-SETHOOK trains_at_stations kafka://kafka:9092/i-have-arrived NEARBY trains FENCE ROAM stations * 10
+SETHOOK trains_at_stations kafka://kafka:9092/i-have-arrived NEARBY trains FENCE ROAM stations * 50
 
 docker-compose exec ksql-cli ksql http://ksql-server:8088
 SET 'ksql.sink.partitions'='3';
-CREATE STREAM "arahants" (id STRING, time STRING) WITH (KAFKA_TOPIC = 'i-have-arrived', VALUE_FORMAT = 'JSON');
-CREATE STREAM "i-am-home" AS SELECT id, time as "moment" FROM "arahants" PARTITION BY id;
+CREATE STREAM "arahants" (id STRING, time STRING, nearby MAP<STRING,STRING>) WITH (KAFKA_TOPIC = 'i-have-arrived', VALUE_FORMAT = 'JSON');
+CREATE STREAM "i-am-home" AS SELECT id, time as "moment", nearby['id'] AS "station" FROM "arahants" WHERE nearby IS NOT NULL PARTITION BY id;
 
 
 https://quarkus.io/guides/kafka-streams-guide

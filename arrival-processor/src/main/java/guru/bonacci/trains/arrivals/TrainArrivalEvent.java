@@ -1,16 +1,17 @@
 package guru.bonacci.trains.arrivals;
 
-import java.time.Instant;
+import lombok.Builder;
+import lombok.ToString;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+@ToString
+@Builder
+public class TrainArrivalEvent {
 
-@Data
-@RequiredArgsConstructor
-public class TrainArrivalEvent { //extends TrainEvent {
+	public String id;
+	public String name;
+	public Double lat;
+	public Double lon;
 
-    private final String name;
-    private final Instant from;
-    private final Instant to;
-
+	public Long until;
+	public String station;
 }

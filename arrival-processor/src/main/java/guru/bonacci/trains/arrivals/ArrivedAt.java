@@ -11,4 +11,5 @@ public class ArrivedAt {
 
     public String ID;
     public Instant moment;
+    public String station;
 }
