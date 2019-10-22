@@ -37,8 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ValuesGenerator {
 
 	private final static double startLat = 32.99;
-	private final static double startLon = -114.99;
 	private final static double stopLat = 34.01;
+	private final static double startLon = -114.99;
 	private final static double stopLon = -115.11;
 	
     private List<Station> stations = Collections.unmodifiableList(
@@ -83,7 +83,7 @@ public class ValuesGenerator {
      Random random = new Random();
 
      List<Train> trains = Collections.unmodifiableList(
-             Arrays.asList(Train.builder().id(UUID.randomUUID().toString())
+             Arrays.asList(Train.builder().id("some random id")
             		 						.name("JVL-WEL")
             		 						.lat(startLat)
             		 						.lon(startLon)
@@ -91,13 +91,13 @@ public class ValuesGenerator {
      		);
 
      @Outgoing("I_AM_HERE")                             
-     public Flowable<KafkaMessage<String, String>> generate() {
+     public Flowable<KafkaMessage<String, String>> trainEvents() {
         return Flowable.interval(300, TimeUnit.MILLISECONDS)    
                 .onBackpressureDrop()
                 .map(tick -> {
                     Train train = moveAhead(trains.get(random.nextInt(trains.size())));
                     String payload = 
-                     		 "{ \"id\" : " + train.id +
+                     		 "{ \"id\" : \"" + train.id + "\"" + 
                              ", \"name\" : \"" + train.name + "\"" + 
 							 ", \"moment\" : \"" + Instant.now() + "\"" + 
                              ", \"lat\" : " + train.lat + 
@@ -124,10 +124,24 @@ public class ValuesGenerator {
                 });
     }
 
+     @Outgoing("I_AM_HOME")                             
+     public Flowable<KafkaMessage<String, String>> arrived() {
+        return Flowable.interval(3000, TimeUnit.MILLISECONDS)    
+                .onBackpressureDrop()
+                .map(tick -> {
+                    String payload = 
+                     		 "{ \"id\" : \"some random id\"" + 
+							 ", \"moment\" : \"" + Instant.now() + "\"}";
+
+                    log.info("temp arrived event: {}", payload);
+                    return KafkaMessage.of("some random id", payload);
+                });
+    }
+
      private Train moveAhead(Train t) {
-    	 if (t.lat >= stopLat)
+    	 if (t.lat <= stopLat)
 			 t.lat += 0.0002;
-    	 if (t.lon <= stopLon)
+    	 if (t.lon >= stopLon)
       		t.lon -= 0.0002;
     	 return t;
       }

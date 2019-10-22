@@ -1,4 +1,4 @@
-# no-more-running-for-trains
+# no more need to run for trains!
 
 https://quarkus.io/guides/kafka-streams-guide
 https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
@@ -13,7 +13,8 @@ https://docs.confluent.io/current/ksql/docs/developer-guide/create-a-stream.html
 Some useful commands:
 
 >>> MVN
-mvn clean package -f train-source/pom.xml ; docker-compose up --build
+mvn clean package -f source/pom.xml ; docker-compose up --build
+mvn clean package -f arrival-processor/pom.xml ; docker-compose up --build
 
 
 >> KAFKACAAT
