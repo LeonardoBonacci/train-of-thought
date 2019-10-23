@@ -7,11 +7,11 @@ import lombok.ToString;
 @Builder
 public class TrainArrivalEvent {
 
-	public String id;
-	public String name;
-	public Double lat;
-	public Double lon;
+	private final String id;
+	private final String name;
+	private final Double lat;
+	private final Double lon;
 
-	public Long until;
-	public String station;
+	private final Long togo;
+	private final String station;
 }

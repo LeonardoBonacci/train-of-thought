@@ -9,5 +9,6 @@
   <modules>
     <module>source</module>
     <module>arrival-processor</module>
+    <module>history-aggregator</module>
   </modules>
 </project>

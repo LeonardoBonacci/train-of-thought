@@ -33,14 +33,14 @@ public class ArrivalProcessor {
         StreamsBuilder builder = new StreamsBuilder();
 
         JsonbSerde<TrainEvent> trainSerde = new JsonbSerde<>(TrainEvent.class);
-        JsonbSerde<ArrivedAt> atStationSerde = new JsonbSerde<>(ArrivedAt.class);
+        JsonbSerde<ArrivalAt> atStationSerde = new JsonbSerde<>(ArrivalAt.class);
         
         KStream<String, TrainEvent> trains = builder.stream(                                                       
                 TRAINS,
                 Consumed.with(Serdes.String(), trainSerde)
         );
 
-        KStream<String, ArrivedAt> atStations = builder.stream(
+        KStream<String, ArrivalAt> atStations = builder.stream(
         		AT_STATIONS, 
         		Consumed.with(Serdes.String(), atStationSerde)
         );
@@ -59,7 +59,7 @@ public class ArrivalProcessor {
         									.name(trainVal.name)
         									.lat(trainVal.lat)
         									.lon(trainVal.lon)
-        									.until(Duration.between(trainVal.moment, atStationVal.moment).toMillis())
+        									.togo(Duration.between(trainVal.moment, atStationVal.moment).toMillis())
         									.station(atStationVal.station)
         									.build();
 
@@ -67,8 +67,7 @@ public class ArrivalProcessor {
                 JoinWindows.of(0).after(Duration.ofMillis(10000)), //add a realistic value here!
                 Joined.with(Serdes.String(), trainSerde, atStationSerde)
         )
-//        .print(Printed.<String, TrainArrivalEvent>toSysOut().withLabel("BLABLABLA"))
-        .peek((k,v) -> log.info("BLA " + v))
+        .peek((k,v) -> log.info("TOGO: " + v))
         .to(                                                          
         		UNTIL_ARRIVAL,
                 Produced.with(Serdes.String(), new JsonbSerde<>(TrainArrivalEvent.class))

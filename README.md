@@ -17,7 +17,9 @@ https://redis.io/topics/protocol
 https://tile38.com/
 https://github.com/lettuce-io/lettuce-core/wiki/Custom-commands,-outputs-and-command-mechanics
 https://tile38.com/topics/replication/
-
+https://docs.confluent.io/current/ksql/docs/installation/install-ksql-with-docker.html 
+https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
+http://karols.github.io/blog/2019/05/12/native-image-on-windows-10-x64/
 https://docs.confluent.io/current/ksql/docs/developer-guide/create-a-stream.html
 
 Some useful commands:

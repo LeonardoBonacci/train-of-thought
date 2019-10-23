@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @ToString
 @RegisterForReflection
-public class ArrivedAt {
+public class ArrivalAt {
 
     public String ID;
     public Instant moment;

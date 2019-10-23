@@ -126,9 +126,28 @@ public class ValuesGenerator {
 		 t.lat += 0.0003;
 		 t.lon -= 0.0003;
     	 return t;
-      }
+     }
       
+     @Outgoing("back-to-the-future")                             
+     public Flowable<KafkaMessage<String, String>> test() {
+        return Flowable.interval(10000, TimeUnit.MILLISECONDS)    
+                .onBackpressureDrop()
+                .map(tick -> {
+            		String payload = 
+                    		 "{ \"id\" : \"12345abc\"" + 
+                            ", \"name\" : \"train name\"" + 
+                            ", \"lat\" : " + 22.22 + 
+                            ", \"lon\" : " + 33.33 + 
+            				", \"togo\" : " + 100000000000l + 
+            				", \"station\" : \"station name\" }"; 
 
+                    
+                    log.info("emitting train event: {}", payload);
+                    return KafkaMessage.of("12345abc", payload);
+                });
+     }
+
+     
      @Builder
      private static class Train {
 
@@ -146,4 +165,16 @@ public class ValuesGenerator {
     	 private final Double lat;
     	 private final Double lon;
      }
+     
+     @Builder // for testing purposes only
+     private static class TrainArrivalEvent {
+
+    		private final String id;
+    		private final String name;
+    		private final Double lat;
+    		private final Double lon;
+
+    		private final Long togo;
+    		private final String station;
+	}
 }
