@@ -1,4 +1,4 @@
-package guru.bonacci.trains.arrivals;
+package guru.bonacci.trains.arrivals.streams;
 
 import java.time.Duration;
 
@@ -14,6 +14,9 @@ import org.apache.kafka.streams.kstream.Joined;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 
+import guru.bonacci.trains.arrivals.model.ArrivalAt;
+import guru.bonacci.trains.arrivals.model.FutureArrival;
+import guru.bonacci.trains.arrivals.model.TrainEvent;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +57,7 @@ public class ArrivalProcessor {
         					trainVal.lon,
         					atStationVal.station);
 
-        			return TrainArrivalEvent.builder()
+        			return FutureArrival.builder()
         									.id(trainVal.id)
         									.name(trainVal.name)
         									.lat(trainVal.lat)
@@ -70,7 +73,7 @@ public class ArrivalProcessor {
         .peek((k,v) -> log.info("TOGO: " + v))
         .to(                                                          
         		UNTIL_ARRIVAL,
-                Produced.with(Serdes.String(), new JsonbSerde<>(TrainArrivalEvent.class))
+                Produced.with(Serdes.String(), new JsonbSerde<>(FutureArrival.class))
         );
 
         return builder.build();

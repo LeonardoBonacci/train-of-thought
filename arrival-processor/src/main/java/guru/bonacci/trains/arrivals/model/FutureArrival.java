@@ -1,11 +1,11 @@
-package guru.bonacci.trains.arrivals;
+package guru.bonacci.trains.arrivals.model;
 
 import lombok.Builder;
 import lombok.ToString;
 
 @ToString
 @Builder
-public class TrainArrivalEvent {
+public class FutureArrival {
 
 	private final String id;
 	private final String name;

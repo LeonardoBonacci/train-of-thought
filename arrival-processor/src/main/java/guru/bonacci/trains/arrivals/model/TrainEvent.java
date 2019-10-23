@@ -1,4 +1,4 @@
-package guru.bonacci.trains.arrivals;
+package guru.bonacci.trains.arrivals.model;
 
 import java.time.Instant;
 
@@ -7,9 +7,11 @@ import lombok.ToString;
 
 @ToString
 @RegisterForReflection
-public class ArrivalAt {
+public class TrainEvent {
 
-    public String ID;
+    public String id;
+    public String name;
     public Instant moment;
-    public String station;
+    public Double lat;
+    public Double lon;
 }

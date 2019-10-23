@@ -31,8 +31,8 @@ mvn clean package -f arrival-processor/pom.xml ; docker-compose up --build
 
 >> KAFKACAAT
 docker run --tty --rm -i --network ks debezium/tooling:1.0
-kafkacat -b kafka:9092 -C -o beginning -q -t i-am-home
-kafkacat -b kafka:9092 -C -o beginning -q -t I_HAVE_ARRIVED -f "%k\n"
+kafkacat -b kafka:9092 -C -o beginning -q -t average-arrival-times
+kafkacat -b kafka:9092 -C -o beginning -q -t average-arrival-times -f "%k\n"
 
  
 >> KSQL
