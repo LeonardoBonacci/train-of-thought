@@ -9,9 +9,9 @@
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>train-history-aggregator</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<artifactId>train-average-aggregator</artifactId>
 	<properties>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<surefire-plugin.version>2.22.0</surefire-plugin.version>
@@ -32,18 +32,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.10</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.davidmoten</groupId>
-			<artifactId>geo</artifactId>
-			<version>0.7.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy</artifactId>
@@ -66,6 +54,13 @@
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy-jsonb</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.davidmoten</groupId>
+			<artifactId>geo</artifactId>
+			<version>0.7.1</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
