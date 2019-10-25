@@ -23,7 +23,7 @@ import io.quarkus.kafka.client.serialization.JsonbSerde;
 @ApplicationScoped
 public class TopologyProducer {
 
-    static final String WEATHER_STATIONS_STORE = "weather-stations-store";
+    static final String STATIONS_STORE = "stations-store";
 
     private static final String WEATHER_STATIONS_TOPIC = "weather-stations";
     private static final String TEMPERATURE_VALUES_TOPIC = "temperature-values";
@@ -36,7 +36,7 @@ public class TopologyProducer {
         JsonbSerde<WeatherStation> weatherStationSerde = new JsonbSerde<>(WeatherStation.class);
         JsonbSerde<Aggregation> aggregationSerde = new JsonbSerde<>(Aggregation.class);
 
-        KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(WEATHER_STATIONS_STORE);
+        KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(STATIONS_STORE);
 
         GlobalKTable<Integer, WeatherStation> stations = builder.globalTable(
                 WEATHER_STATIONS_TOPIC,

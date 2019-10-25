@@ -15,13 +15,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.acme.quarkus.sample.kafkastreams.streams.GetWeatherStationDataResult;
 import org.acme.quarkus.sample.kafkastreams.streams.InteractiveQueries;
 import org.acme.quarkus.sample.kafkastreams.streams.PipelineMetadata;
+import org.acme.quarkus.sample.kafkastreams.streams.StationDataResult;
 
 @ApplicationScoped
-@Path("/weather-stations")
-public class WeatherStationEndpoint {
+@Path("/train-stations")
+public class StationEndpoint {
 
     @Inject
     InteractiveQueries interactiveQueries;
@@ -30,8 +30,8 @@ public class WeatherStationEndpoint {
     @Path("/data/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWeatherStationData(@PathParam("id") int id) {
-        GetWeatherStationDataResult result = interactiveQueries.getWeatherStationData(id);
+    public Response getStationData(@PathParam("id") int id) {
+        StationDataResult result = interactiveQueries.getStationData(id);
 
         if (result.getResult().isPresent()) {
             return Response.ok(result.getResult().get()).build();
@@ -41,7 +41,7 @@ public class WeatherStationEndpoint {
             return Response.seeOther(otherUri).build();
         }
         else {
-            return Response.status(Status.NOT_FOUND.getStatusCode(), "No data found for weather station " + id).build();
+            return Response.status(Status.NOT_FOUND.getStatusCode(), "No data found for train station " + id).build();
         }
     }
 
@@ -54,7 +54,7 @@ public class WeatherStationEndpoint {
 
     private URI getOtherUri(String host, int port, int id) {
         try {
-            return new URI("http://" + host + ":" + port + "/weather-stations/data/" + id);
+            return new URI("http://" + host + ":" + port + "/train-stations/data/" + id);
         }
         catch (URISyntaxException e) {
             throw new RuntimeException(e);

@@ -3,7 +3,7 @@ package org.acme.quarkus.sample.kafkastreams.model;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class WeatherStationData {
+public class StationData {
 
     public int stationId;
     public String stationName;
@@ -12,7 +12,7 @@ public class WeatherStationData {
     public int count;
     public double avg;
 
-    private WeatherStationData(int stationId, String stationName, double min, double max, int count, double avg) {
+    private StationData(int stationId, String stationName, double min, double max, int count, double avg) {
         this.stationId = stationId;
         this.stationName = stationName;
         this.min = min;
@@ -21,8 +21,8 @@ public class WeatherStationData {
         this.avg = avg;
     }
 
-    public static WeatherStationData from(Aggregation aggregation) {
-        return new WeatherStationData(
+    public static StationData from(Aggregation aggregation) {
+        return new StationData(
                 aggregation.stationId,
                 aggregation.stationName,
                 aggregation.min,
