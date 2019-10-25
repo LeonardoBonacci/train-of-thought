@@ -12,6 +12,9 @@
 		<module>source</module>
 		<module>arrival-processor</module>
 		<module>averager</module>
+
+		<module>producer</module>
+		<module>aggregator</module>
 	</modules>
 	
 	<dependencies>
