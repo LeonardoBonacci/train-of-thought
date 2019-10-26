@@ -1,20 +1,20 @@
 package org.acme.quarkus.sample.kafkastreams.streams;
 
-import java.time.Instant;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
-import org.acme.quarkus.sample.kafkastreams.model.Aggregation;
-import org.acme.quarkus.sample.kafkastreams.model.TemperatureMeasurement;
-import org.acme.quarkus.sample.kafkastreams.model.WeatherStation;
+import org.acme.quarkus.sample.kafkastreams.model.StationAggregation;
+import org.acme.quarkus.sample.kafkastreams.model.IncomingTrain;
+import org.acme.quarkus.sample.kafkastreams.model.IncomingTrainAtStation;
+import org.acme.quarkus.sample.kafkastreams.model.Station;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.GlobalKTable;
+import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
@@ -25,48 +25,48 @@ public class TopologyProducer {
 
     static final String STATIONS_STORE = "stations-store";
 
-    private static final String WEATHER_STATIONS_TOPIC = "weather-stations";
-    private static final String TEMPERATURE_VALUES_TOPIC = "temperature-values";
-    private static final String TEMPERATURES_AGGREGATED_TOPIC = "temperatures-aggregated";
+    private static final String STATIONS = "train-stations";
+    private static final String INCOMING = "incoming-trains";
+    private static final String TRAINS_AGGREGATED = "trains-aggregated";
 
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
-        JsonbSerde<WeatherStation> weatherStationSerde = new JsonbSerde<>(WeatherStation.class);
-        JsonbSerde<Aggregation> aggregationSerde = new JsonbSerde<>(Aggregation.class);
+        JsonbSerde<IncomingTrain> trainSerde = new JsonbSerde<>(IncomingTrain.class);
+        JsonbSerde<Station> stationSerde = new JsonbSerde<>(Station.class);
+        JsonbSerde<StationAggregation> aggregationSerde = new JsonbSerde<>(StationAggregation.class);
 
         KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(STATIONS_STORE);
 
-        GlobalKTable<Integer, WeatherStation> stations = builder.globalTable(
-                WEATHER_STATIONS_TOPIC,
-                Consumed.with(Serdes.Integer(), weatherStationSerde));
+        GlobalKTable<Integer, Station> stations = builder.globalTable(
+                STATIONS,
+                Consumed.with(Serdes.Integer(), stationSerde));
 
         builder.stream(
-                        TEMPERATURE_VALUES_TOPIC,
-                        Consumed.with(Serdes.Integer(), Serdes.String())
-                )
-                .join(
-                        stations,
-                        (stationId, timestampAndValue) -> stationId,
-                        (timestampAndValue, station) -> {
-                            String[] parts = timestampAndValue.split(";");
-                            return new TemperatureMeasurement(station.id, station.name, Instant.parse(parts[0]), Double.valueOf(parts[1]));
-                        }
-                )
-                .groupByKey()
-                .aggregate(
-                        Aggregation::new,
-                        (stationId, value, aggregation) -> aggregation.updateFrom(value),
-                        Materialized.<Integer, Aggregation> as(storeSupplier)
-                            .withKeySerde(Serdes.Integer())
-                            .withValueSerde(aggregationSerde)
-                )
-                .toStream()
-                .to(
-                        TEMPERATURES_AGGREGATED_TOPIC,
-                        Produced.with(Serdes.Integer(), aggregationSerde)
-                );
+                INCOMING,
+                Consumed.with(Serdes.String(), trainSerde)
+            )
+        	.selectKey((key, value) -> value._goto)
+            .join(
+                    stations,
+                    (stationId, train) -> stationId,
+                    (train, station) -> new IncomingTrainAtStation(train, station)
+            )
+            .groupByKey(Grouped.with(Serdes.Integer(),  new JsonbSerde<>(IncomingTrainAtStation.class)))
+            .aggregate(
+                    StationAggregation::new,
+                    (stationId, value, aggregation) -> aggregation.updateFrom(value),
+                    Materialized.<Integer, StationAggregation> as(storeSupplier)
+                        .withKeySerde(Serdes.Integer())
+                        .withValueSerde(aggregationSerde)
+            )
+            .toStream()
+            .print(Printed.toSysOut());
+        //                .to(
+//                        TRAINS_AGGREGATED,
+//                        Produced.with(Serdes.Integer(), aggregationSerde)
+//                );
 
         return builder.build();
     }

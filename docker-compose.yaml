@@ -53,24 +53,24 @@ services:
 #    networks:
 #      - kafkastreams-network
 
-#  tile-server:
-#    image: tile38/tile38
-#    ports:
-#      - "9851:9851"
-#    networks:
-#      - kafkastreams-network
+  tile-server:
+    image: tile38/tile38
+    ports:
+      - "9851:9851"
+    networks:
+      - kafkastreams-network
 
-#  source:
-#    image: leonardobonacci/train-source:1.0
-#    depends_on:
-#      - tile-server
-#    build:
-#      context: source
-#      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-#    environment:
-#      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-#    networks:
-#      - kafkastreams-network
+  source:
+    image: leonardobonacci/train-source:1.0
+    depends_on:
+      - tile-server
+    build:
+      context: source
+      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - kafkastreams-network
 
 #  arrivals:
 #    image: leonardobonacci/train-arrival-processor:1.0
@@ -91,16 +91,7 @@ services:
 #      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
 #    networks:
 #      - kafkastreams-network
-
-  producer:
-    image: quarkus-quickstarts/kafka-streams-producer:1.0
-    build:
-      context: producer
-      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - kafkastreams-network
+#   - kafkastreams-network
       
   aggregator:
     image: quarkus-quickstarts/kafka-streams-aggregator:1.0

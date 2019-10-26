@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.acme.quarkus.sample.kafkastreams.model.Aggregation;
+import org.acme.quarkus.sample.kafkastreams.model.StationAggregation;
 import org.acme.quarkus.sample.kafkastreams.model.StationData;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.Serdes;
@@ -57,7 +57,7 @@ public class InteractiveQueries {
         }
         else if (metadata.host().equals(host)) {
             log.info("Found data for key {} locally", id);
-            Aggregation result = getStationStore().get(id);
+            StationAggregation result = getStationStore().get(id);
 
             if (result != null) {
                 return StationDataResult.found(StationData.from(result));
@@ -72,7 +72,7 @@ public class InteractiveQueries {
         }
     }
 
-    private ReadOnlyKeyValueStore<Integer, Aggregation> getStationStore() {
+    private ReadOnlyKeyValueStore<Integer, StationAggregation> getStationStore() {
         while (true) {
             try {
                 return streams.store(TopologyProducer.STATIONS_STORE, QueryableStoreTypes.keyValueStore());

@@ -15,8 +15,10 @@
 
 		<module>producer</module>
 		<module>aggregator</module>
+
+		<module>shared-model</module>
 	</modules>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -24,5 +26,10 @@
 			<version>1.18.10</version>
 			<scope>provided</scope>
 		</dependency>
-	</dependencies>	
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>21.0</version>
+		</dependency>
+	</dependencies>
 </project>

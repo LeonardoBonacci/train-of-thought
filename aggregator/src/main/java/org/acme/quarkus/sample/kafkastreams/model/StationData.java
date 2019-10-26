@@ -1,33 +1,32 @@
 package org.acme.quarkus.sample.kafkastreams.model;
 
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import static java.util.stream.Collectors.toList;
 
+import java.util.List;
+
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.ToString;
+
+@ToString
 @RegisterForReflection
 public class StationData {
 
     public int stationId;
     public String stationName;
-    public double min = Double.MAX_VALUE;
-    public double max = Double.MIN_VALUE;
-    public int count;
-    public double avg;
+    public List<TrainData> expected;
 
-    private StationData(int stationId, String stationName, double min, double max, int count, double avg) {
+    private StationData(int stationId, String stationName, List<TrainData> trains) {
         this.stationId = stationId;
         this.stationName = stationName;
-        this.min = min;
-        this.max = max;
-        this.count = count;
-        this.avg = avg;
+        this.expected = trains;
     }
 
-    public static StationData from(Aggregation aggregation) {
+    public static StationData from(StationAggregation aggregation) {
         return new StationData(
                 aggregation.stationId,
                 aggregation.stationName,
-                aggregation.min,
-                aggregation.max,
-                aggregation.count,
-                aggregation.avg);
+                aggregation.trains.values().stream()
+                				.map(TrainData::from)
+                				.collect(toList()));
     }
 }

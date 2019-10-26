@@ -1,6 +1,5 @@
-package guru.bonacci.trains.source.generator;
+package guru.bonacci.trains.source;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,12 +7,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-
-import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.api.StatefulRedisConnection;
@@ -36,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ApplicationScoped
-public class ValuesGenerator {
+public class Simulator {
 
 	private final static double START_LAT = 33.00;
 	private final static double START_LON = -115.00;
@@ -178,7 +174,7 @@ public class ValuesGenerator {
 //        return Flowable.fromIterable(fas);
 //     }
 
-     @Outgoing("back-to-the-future")                             
+//     @Outgoing("back-to-the-future")                             
      public Flowable<KafkaMessage<String, String>> test2() {
         return Flowable.interval(5, TimeUnit.SECONDS)    
                 .onBackpressureDrop()

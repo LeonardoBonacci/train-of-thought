@@ -13,5 +13,5 @@ public class FutureArrival {
 	private final Double lon;
 
 	private final Long togo;
-	private final String station;
+	private final String _goto;
 }

@@ -25,7 +25,7 @@ public class HistoryProcessor {
 
 
     private static final String UNTIL_ARRIVAL = "back-to-the-future";
-    private static final String AVERAGE_ARRIVAL_TIMES = "average-arrival-times";
+    private static final String AVERAGE_ARRIVAL_TIMES = "so-long";
     
 
     @Produces
@@ -45,7 +45,7 @@ public class HistoryProcessor {
         .aggregate(                                                   
               AvgFutureArrival::new,
               (compositeId, value, aggregation) -> aggregation.updateFrom(value),
-               Materialized.with(Serdes.String(), avgSerde)
+                Materialized.with(Serdes.String(), avgSerde)
         )
         .toStream()
         .peek((k,v) -> log.info(k + " <<< " + v))
