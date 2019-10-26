@@ -33,7 +33,7 @@
 * kafkacat -b kafka:9092 -C -o beginning -q -t average-arrival-times
 * kafkacat -b kafka:9092 -C -o beginning -q -t average-arrival-times -f "%k\n"
 * http sink:8080/train-stations/meta-data
-* http --follow 786331da4941:8080/train-stations/data/0
+* http --follow 3372b22d21bf:8080/train-stations/data/0
 
  
 ### KSQL

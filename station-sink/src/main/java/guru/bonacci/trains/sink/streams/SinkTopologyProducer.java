@@ -21,14 +21,14 @@ import guru.bonacci.trains.sink.model.StationAggregation;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 
 @ApplicationScoped
-public class TopologyProducer {
+public class SinkTopologyProducer {
 
     static final String STATIONS_STORE = "stations-store";
 
     private static final String STATIONS = "train-stations";
-    private static final String INCOMING = "incoming-trains";
-    private static final String TRAINS_AGGREGATED = "trains-aggregated";
+    private static final String INCOMING = "i-am-coming";
 
+    
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
@@ -63,10 +63,6 @@ public class TopologyProducer {
             )
             .toStream()
             .print(Printed.toSysOut());
-        //                .to(
-//                        TRAINS_AGGREGATED,
-//                        Produced.with(Serdes.Integer(), aggregationSerde)
-//                );
 
         return builder.build();
     }

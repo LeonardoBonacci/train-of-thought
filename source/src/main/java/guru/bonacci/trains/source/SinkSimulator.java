@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,7 @@ public class SinkSimulator {
             		SimStation.builder().id(8).name("Wellington Station").lat(33.09).lon(-115.09).build()
             ));
 
-    @Outgoing("incoming-trains")
+    @Outgoing("i-am-coming")
     public Flowable<KafkaMessage<String, String>> trains() {
         return Flowable.interval(500, TimeUnit.MILLISECONDS)
                 .onBackpressureDrop()

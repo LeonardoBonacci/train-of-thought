@@ -32,7 +32,7 @@ public class InteractiveQueries {
 
     
     public List<PipelineMetadata> getMetaData() {
-        return streams.allMetadataForStore(TopologyProducer.STATIONS_STORE)
+        return streams.allMetadataForStore(SinkTopologyProducer.STATIONS_STORE)
                 .stream()
                 .map(m -> new PipelineMetadata(
                         m.hostInfo().host() + ":" + m.hostInfo().port(),
@@ -46,7 +46,7 @@ public class InteractiveQueries {
 
     public StationDataResult getStationData(int id) {
         StreamsMetadata metadata = streams.metadataForKey(
-                TopologyProducer.STATIONS_STORE,
+                SinkTopologyProducer.STATIONS_STORE,
                 id,
                 Serdes.Integer().serializer()
         );
@@ -75,7 +75,7 @@ public class InteractiveQueries {
     private ReadOnlyKeyValueStore<Integer, StationAggregation> getStationStore() {
         while (true) {
             try {
-                return streams.store(TopologyProducer.STATIONS_STORE, QueryableStoreTypes.keyValueStore());
+                return streams.store(SinkTopologyProducer.STATIONS_STORE, QueryableStoreTypes.keyValueStore());
             } catch (InvalidStateStoreException e) {
                 // ignore, store not ready yet
             }

@@ -13,8 +13,8 @@ public class StationAggregation {
     public int stationId;
     public String stationName;
     
-    // no need for it to be synchronized for now...
-    //TODO  private PassiveExpiringMap<String, Train> trains = new PassiveExpiringMap<>(90l, TimeUnit.SECONDS);
+    // no need for synchronization just yet...
+//TODO use: org.apache.commons.collections4.map.PassiveExpiringMap
     public Map<String, Train> trains = new HashMap<>();
     
     public StationAggregation updateFrom(IncomingTrainAtStation incoming) {
