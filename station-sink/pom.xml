@@ -11,7 +11,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>kafka-streams-quickstart-aggregator</artifactId>
+	<artifactId>train-station-sink</artifactId>
 	<properties>
 		<surefire-plugin.version>2.22.0</surefire-plugin.version>
 		<maven.compiler.target>1.8</maven.compiler.target>

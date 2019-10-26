@@ -1,17 +1,16 @@
-package org.acme.quarkus.sample.kafkastreams.model;
+package guru.bonacci.trains.sink.model;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @RegisterForReflection
-public class IncomingTrain {
+public class Train {
 
-    public String trainId;
     public String trainName;
-    
-    public int _goto;
-    public long togo;
+    public long msUntilArrival;
 }

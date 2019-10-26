@@ -1,4 +1,4 @@
-package org.acme.quarkus.sample.kafkastreams.streams;
+package guru.bonacci.trains.sink.streams;
 
 import java.util.Set;
 

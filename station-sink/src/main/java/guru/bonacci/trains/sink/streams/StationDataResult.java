@@ -1,9 +1,9 @@
-package org.acme.quarkus.sample.kafkastreams.streams;
+package guru.bonacci.trains.sink.streams;
 
 import java.util.Optional;
 import java.util.OptionalInt;
 
-import org.acme.quarkus.sample.kafkastreams.model.StationData;
+import guru.bonacci.trains.sink.model.StationData;
 
 public class StationDataResult {
 

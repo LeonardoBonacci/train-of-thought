@@ -1,4 +1,4 @@
-package org.acme.quarkus.sample.kafkastreams.streams;
+package guru.bonacci.trains.sink.streams;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.acme.quarkus.sample.kafkastreams.model.StationAggregation;
-import org.acme.quarkus.sample.kafkastreams.model.StationData;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -17,6 +15,8 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.apache.kafka.streams.state.StreamsMetadata;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import guru.bonacci.trains.sink.model.StationAggregation;
+import guru.bonacci.trains.sink.model.StationData;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

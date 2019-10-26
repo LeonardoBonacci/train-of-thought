@@ -1,4 +1,4 @@
-package org.acme.quarkus.sample.kafkastreams.model;
+package guru.bonacci.trains.sink.model;
 
 import java.time.Duration;
 

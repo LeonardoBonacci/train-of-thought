@@ -1,4 +1,4 @@
-package org.acme.quarkus.sample.kafkastreams.rest;
+package guru.bonacci.trains.sink.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,9 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.acme.quarkus.sample.kafkastreams.streams.InteractiveQueries;
-import org.acme.quarkus.sample.kafkastreams.streams.PipelineMetadata;
-import org.acme.quarkus.sample.kafkastreams.streams.StationDataResult;
+import guru.bonacci.trains.sink.streams.InteractiveQueries;
+import guru.bonacci.trains.sink.streams.PipelineMetadata;
+import guru.bonacci.trains.sink.streams.StationDataResult;
 
 @ApplicationScoped
 @Path("/train-stations")

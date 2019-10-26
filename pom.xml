@@ -12,9 +12,7 @@
 		<module>source</module>
 		<module>arrival-processor</module>
 		<module>averager</module>
-
-		<module>producer</module>
-		<module>aggregator</module>
+		<module>station-sink</module>
 
 		<module>shared-model</module>
 	</modules>

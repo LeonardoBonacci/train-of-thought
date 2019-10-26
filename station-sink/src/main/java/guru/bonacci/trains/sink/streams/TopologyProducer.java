@@ -1,12 +1,8 @@
-package org.acme.quarkus.sample.kafkastreams.streams;
+package guru.bonacci.trains.sink.streams;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
-import org.acme.quarkus.sample.kafkastreams.model.StationAggregation;
-import org.acme.quarkus.sample.kafkastreams.model.IncomingTrain;
-import org.acme.quarkus.sample.kafkastreams.model.IncomingTrainAtStation;
-import org.acme.quarkus.sample.kafkastreams.model.Station;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
@@ -18,6 +14,10 @@ import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
+import guru.bonacci.trains.sink.model.IncomingTrain;
+import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
+import guru.bonacci.trains.sink.model.Station;
+import guru.bonacci.trains.sink.model.StationAggregation;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 
 @ApplicationScoped

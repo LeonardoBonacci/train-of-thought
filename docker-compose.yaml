@@ -93,10 +93,10 @@ services:
 #      - kafkastreams-network
 #   - kafkastreams-network
       
-  aggregator:
-    image: quarkus-quickstarts/kafka-streams-aggregator:1.0
+  sink:
+    image: leonardobonacci/train-station-sink:1.0
     build:
-      context: aggregator
+      context: station-sink
       dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
     environment:
       QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
