@@ -12,6 +12,6 @@ public class IncomingTrain {
     public String trainId;
     public String trainName;
     
-    public int _goto;
+    public int gotoId;
     public long togo;
 }

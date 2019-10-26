@@ -48,7 +48,7 @@ public class SinkSimulator {
                     String train = 
     	                    "{ \"trainId\" : \"" + t.trainId + "\"" +
     	                    ", \"trainName\" : \"" + t.trainName + "\"" +
-             				", \"_goto\" : " + t._goto + 
+             				", \"gotoId\" : " + t.gotoId + 
              				", \"togo\" : " + t.togo + " }";
 
                     log.info("station: {}, train: {}", station.name, train);
@@ -80,7 +80,7 @@ public class SinkSimulator {
    		private final String trainId;
    		private final String trainName;
 
-   		private final int _goto;
+   		private final int gotoId;
    		private final long togo;
 	}
 

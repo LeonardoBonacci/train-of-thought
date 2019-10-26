@@ -47,7 +47,7 @@ public class SinkTopologyProducer {
                 INCOMING,
                 Consumed.with(Serdes.String(), trainSerde)
             )
-        	.selectKey((key, value) -> value._goto)
+        	.selectKey((key, value) -> value.gotoId)
             .join(
                     stations,
                     (stationId, train) -> stationId,

@@ -19,11 +19,11 @@ public class IncomingTrainAtStation {
     
     
     public IncomingTrainAtStation(IncomingTrain train, Station station) {
-    	Preconditions.checkArgument(train.togo != station.id, "How can this be?");
+    	Preconditions.checkArgument(train.gotoId != station.id, "This is no good");
     	
     	this.trainId = train.trainId;
     	this.trainName = train.trainName;
-    	this.stationId = train._goto;
+    	this.stationId = train.gotoId;
     	this.stationName = station.name;
     	this.togo = train.togo;
     }
