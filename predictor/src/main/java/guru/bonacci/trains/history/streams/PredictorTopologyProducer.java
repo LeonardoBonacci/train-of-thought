@@ -9,6 +9,7 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.Printed;
+import org.apache.kafka.streams.kstream.Produced;
 
 import com.github.davidmoten.geo.GeoHash;
 
@@ -24,40 +25,32 @@ public class PredictorTopologyProducer {
 
     private static final String LIVE_TRAINS = "on-my-way";
 	private static final String TRAIN_TIME_PREDICTIONS = "so-long";
-
+    private static final String HOMEWARD = "homeward-bound";
     
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
+        // more realistically this would be a KTable
         GlobalKTable<String, SoLongTrain> predictions = builder.globalTable(
         		TRAIN_TIME_PREDICTIONS,
                 Consumed.with(Serdes.String(), new JsonbSerde<>(SoLongTrain.class)));
         
-//        builder.stream(
-//                LIVE_TRAINS,
-//                Consumed.with(Serdes.String(), new JsonbSerde<>(WayTrain.class))
-//            )
-//        	.selectKey((key, value) -> value.trainName.replaceAll("\\s","") + "-" 
-//        								+ GeoHash.encodeHash(value.lat, value.lon, 7) + "-" 
-//        								+ value.gotoName.replaceAll("\\s",""))
-//        	.join(predictions, 
-//        		 (train, prediction) -> new HomewardTrain(train.trainId, train.trainName, train.gotoId, prediction.togo),
-//        		 Joined.with(Serdes.String(), new JsonbSerde<>(WayTrain.class), new JsonbSerde<>(SoLongTrain.class))
-//        	)
-//            .print(Printed.toSysOut());
         builder.stream(
                 LIVE_TRAINS,
                 Consumed.with(Serdes.String(), new JsonbSerde<>(WayTrain.class))
             )
-	    	.selectKey((key, value) -> value.trainName.replaceAll("\\s","") 
-	    							+ "-" + GeoHash.encodeHash(value.lat, value.lon, 7) 
-	    							+ "-" + value.gotoName.replaceAll("\\s",""))
+	    	.selectKey((key, value) -> String.format("%s-%s-%s"
+							    			, value.trainName.replaceAll("\\s","") 
+							    			, GeoHash.encodeHash(value.lat, value.lon, 7) 
+							    			, value.gotoName.replaceAll("\\s","")))
         	.join(predictions, 
-        		 (trainId, train) -> trainId,
+        		 (trainId, train) -> trainId, //unnecessary
         		 (train, prediction) -> new HomewardTrain(train.trainId, train.trainName, train.gotoId, prediction.togo)
         	)
-            .print(Printed.toSysOut());
+        	.selectKey((k,v) -> v.trainId)
+        	.peek((k,v) -> log.info(k + " <> " + v))
+        	.to(HOMEWARD, Produced.with(Serdes.String(), new JsonbSerde<>(HomewardTrain.class)));
         
         return builder.build();
     }
