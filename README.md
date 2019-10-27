@@ -2,6 +2,7 @@
 
 ## TODO
 add separate manual test intructions in readme files
+each service its own docker-compose
 change repo name to train-of-thoughts
 finish services
 add truth https://truth.dev/
@@ -22,6 +23,7 @@ make train simulator of wellington
 
 
 ### useful links
+* https://docs.confluent.io/current/app-development/kafkacat-usage.html
 * https://quarkus.io/guides/kafka-streams-guide
 * https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
 * http://karols.github.io/blog/2019/05/12/native-image-on-windows-10-x64/

@@ -12,10 +12,7 @@ import lombok.ToString;
 public class SoLongTrain {
 
     public String trainName;
-    
-    public double lat;
-    public double lon;
-    
-    public int gotoId;
-    public long togo;
+//    
+//    public int gotoId;
+//    public long togo;
 }
