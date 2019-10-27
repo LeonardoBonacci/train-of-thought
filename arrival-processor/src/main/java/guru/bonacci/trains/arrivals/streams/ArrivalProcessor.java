@@ -63,7 +63,7 @@ public class ArrivalProcessor {
         									.lat(trainVal.lat)
         									.lon(trainVal.lon)
         									.togo(Duration.between(trainVal.moment, atStationVal.moment).toMillis())
-        									.station(atStationVal.station)
+        									._goto(atStationVal.station)
         									.build();
 
                 },

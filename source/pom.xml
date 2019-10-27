@@ -20,17 +20,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.quarkus</groupId>
-				<artifactId>quarkus-bom</artifactId>
-				<version>${quarkus.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>io.quarkus</groupId>
@@ -51,10 +41,6 @@
 			<artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>biz.paluch.redis</groupId>
 			<artifactId>lettuce</artifactId>
