@@ -38,7 +38,7 @@ public class SinkSimulator {
             		SimStation.builder().id(8).name("Wellington Station").lat(33.09).lon(-115.09).build()
             ));
 
-    @Outgoing("i-am-coming")
+    @Outgoing("homeward-bound")
     public Flowable<KafkaMessage<String, String>> trains() {
         return Flowable.interval(500, TimeUnit.MILLISECONDS)
                 .onBackpressureDrop()

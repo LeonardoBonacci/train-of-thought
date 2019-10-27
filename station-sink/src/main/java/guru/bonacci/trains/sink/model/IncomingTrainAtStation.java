@@ -2,6 +2,8 @@ package guru.bonacci.trains.sink.model;
 
 import com.google.common.base.Preconditions;
 
+import guru.bonacci.trains.model.Station;
+import guru.bonacci.trains.model.homewardbound.IncomingTrain;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -19,7 +21,8 @@ public class IncomingTrainAtStation {
     
     
     public IncomingTrainAtStation(IncomingTrain train, Station station) {
-    	Preconditions.checkArgument(train.gotoId != station.id, "This is no good");
+    	Preconditions.checkArgument(train.gotoId == station.id, 
+    			"This is no good: train.stationId %s and station.id %s", train.gotoId, station.id);
     	
     	this.trainId = train.trainId;
     	this.trainName = train.trainName;

@@ -14,9 +14,9 @@ import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
-import guru.bonacci.trains.sink.model.IncomingTrain;
+import guru.bonacci.trains.model.Station;
+import guru.bonacci.trains.model.homewardbound.IncomingTrain;
 import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
-import guru.bonacci.trains.sink.model.Station;
 import guru.bonacci.trains.sink.model.StationAggregation;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 
@@ -26,7 +26,7 @@ public class SinkTopologyProducer {
     static final String STATIONS_STORE = "stations-store";
 
     private static final String STATIONS = "train-stations";
-    private static final String INCOMING = "i-am-coming";
+    private static final String INCOMING = "homeward-bound";
 
     
     @Produces

@@ -1,4 +1,4 @@
-package guru.bonacci.trains.sink.model;
+package guru.bonacci.trains.model.homewardbound;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.NoArgsConstructor;
