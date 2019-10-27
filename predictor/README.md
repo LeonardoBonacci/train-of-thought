@@ -8,15 +8,14 @@ kafkacat -L -b kafka
 kafkacat -C -b kafka -t so-long
 
 kafkacat -P -b kafka -t so-long -K:
-"somename-9myhjbx-Crofton":{ "trainName" : "JVL-WELL", "geoHash" : "9myhjbx", "avgTime" : 112358, "gotoId" : 7 }
+JVL-WELL-9myhjbx-Crofton:{ "trainName" : "JVL-WELL", "geoHash" : "9myhjbx", "gotoId" : 7, "togo" : 112358 }
+JVL-WELL-9myhjbx-Ngaio:{ "trainName" : "JVL-WELL", "geoHash" : "9myhjbx", "gotoId" : 7, "togo" : 112359 }
 
-"somename-9myhjbx-Crofton":{ "trainName" : "JVL-WELL" }
-"1234":{ "trainName" : "some name" }
+Crofton:{ "trainName" : "JVL-WELL", "geoHash" : "9myhjbx", "gotoId" : 7, "togo" : 112358 }
 
 kafkacat -P -b kafka -t on-my-way -K:
-"tr>1":{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 7, "gotoName" : "Crofton" }
-"tr>1":{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 8, "gotoName" : "Ngaio" }
-"tr>1":{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 9, "gotoName" : "Wellington Station" }
+tr>1:{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 7, "gotoName" : "Crofton" }
+tr>1:{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 8, "gotoName" : "Ngaio" }
 
 
 

@@ -12,7 +12,7 @@ import lombok.ToString;
 public class SoLongTrain {
 
     public String trainName;
-//    
-//    public int gotoId;
-//    public long togo;
+    public String geoHash;
+    public int gotoId;
+    public long togo;
 }

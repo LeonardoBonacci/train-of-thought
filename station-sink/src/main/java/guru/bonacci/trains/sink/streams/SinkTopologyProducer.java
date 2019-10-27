@@ -25,7 +25,7 @@ public class SinkTopologyProducer {
 
     static final String STATIONS_STORE = "stations-store";
 
-    private static final String INCOMING_TRAINS = "homeward-bound";
+    private static final String TRAINS = "homeward-bound";
     private static final String STATIONS = "stations";
 
     
@@ -44,7 +44,7 @@ public class SinkTopologyProducer {
                 Consumed.with(Serdes.Integer(), stationSerde));
 
         builder.stream(
-                INCOMING_TRAINS,
+                TRAINS,
                 Consumed.with(Serdes.String(), trainSerde)
             )
         	.selectKey((key, value) -> value.gotoId)
