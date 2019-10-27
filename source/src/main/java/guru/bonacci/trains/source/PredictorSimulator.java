@@ -32,22 +32,26 @@ public class PredictorSimulator {
             		Station.builder().id(8).name("Wellington Station").lat(33.09).lon(-115.09).build()
             ));
 
-    @Outgoing("on-may-way")
-    public Flowable<KafkaMessage<String, String>> trains() {
+    private List<WayTrain> trains = Collections.unmodifiableList(
+            Arrays.asList( 
+            		new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(0).id, stations.get(0).name),
+            		new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(1).id, stations.get(1).name),
+            		new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(2).id, stations.get(2).name)
+            ));
+
+    @Outgoing("on-my-way")
+    public Flowable<KafkaMessage<String, String>> trainss() {
         return Flowable.interval(500, TimeUnit.MILLISECONDS)
                 .onBackpressureDrop()
                 .map(tick -> {
-                	WayTrain t = new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(0).id, stations.get(0).name);
-//                    WayTrain t1 = new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(1).id, stations.get(1).name);
-//                    WayTrain t2 = new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(2).id, stations.get(2).name);
-
+                	WayTrain t = trains.get(random.nextInt(trains.size()));
                     String train = 
     	                    "{ \"trainId\" : \"" + t.trainId + "\"" +
     	                    ", \"trainName\" : \"" + t.trainName + "\"" +
     	                    ", \"lat\" : " + t.lat + 
                             ", \"lon\" : " + t.lon + 
              				", \"gotoId\" : " + t.gotoId + 
-             				", \"togo\" : \"" + t.gotoName + "\" }";
+             				", \"gotoName\" : \"" + t.gotoName + "\" }";
 
                     log.info("train: {}", train);
                     return KafkaMessage.of(t.trainId, train);

@@ -1,5 +1,16 @@
 # no more need to run for trains!
 
+## TODO
+add separate manual test intructions in readme files
+change repo name to train-of-thoughts
+finish services
+add truth https://truth.dev/
+use https://www.testcontainers.org/
+make some ksql udf
+make kafka tile38 connector
+make train simulator of wellington
+
+
 ## MANUAL STEPS (for now..)
 * docker run --net=host -it tile38/tile38 tile38-cli
 * SETHOOK trains_at_stations kafka://kafka:9092/i-have-arrived NEARBY trains FENCE ROAM stations * 50

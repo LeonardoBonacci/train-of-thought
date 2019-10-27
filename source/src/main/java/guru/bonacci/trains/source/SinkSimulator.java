@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
+
 import guru.bonacci.trains.model.Station;
 import guru.bonacci.trains.model.homewardbound.HomewardTrain;
 import io.reactivex.Flowable;
@@ -30,22 +32,22 @@ public class SinkSimulator {
             ));
 
 //    @Outgoing("homeward-bound")
-    public Flowable<KafkaMessage<String, String>> trains() {
-        return Flowable.interval(500, TimeUnit.MILLISECONDS)
-                .onBackpressureDrop()
-                .map(tick -> {
-                    Station station = stations.get(0); 
-                    HomewardTrain t = new HomewardTrain("tr>" + random.nextInt(10), "some name", station.id, random.nextLong());
-                    String train = 
-    	                    "{ \"trainId\" : \"" + t.trainId + "\"" +
-    	                    ", \"trainName\" : \"" + t.trainName + "\"" +
-             				", \"gotoId\" : " + t.gotoId + 
-             				", \"togo\" : " + t.togo + " }";
-
-                    log.info("station: {}, train: {}", station.name, train);
-                    return KafkaMessage.of(t.trainId, train);
-                });
-    }
+//    public Flowable<KafkaMessage<String, String>> trains() {
+//        return Flowable.interval(500, TimeUnit.MILLISECONDS)
+//                .onBackpressureDrop()
+//                .map(tick -> {
+//                    Station station = stations.get(0); 
+//                    HomewardTrain t = new HomewardTrain("tr>" + random.nextInt(10), "some name", station.id, random.nextLong());
+//                    String train = 
+//    	                    "{ \"trainId\" : \"" + t.trainId + "\"" +
+//    	                    ", \"trainName\" : \"" + t.trainName + "\"" +
+//             				", \"gotoId\" : " + t.gotoId + 
+//             				", \"togo\" : " + t.togo + " }";
+//
+//                    log.info("station: {}, train: {}", station.name, train);
+//                    return KafkaMessage.of(t.trainId, train);
+//                });
+//    }
 
 //    @Outgoing("stations")
     public Flowable<KafkaMessage<Integer, String>> stations() {
