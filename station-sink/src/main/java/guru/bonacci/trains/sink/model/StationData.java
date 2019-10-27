@@ -15,6 +15,7 @@ public class StationData {
     public String stationName;
     public List<TrainData> expected;
 
+    
     private StationData(int stationId, String stationName, List<TrainData> trains) {
         this.stationId = stationId;
         this.stationName = stationName;

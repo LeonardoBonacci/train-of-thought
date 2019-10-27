@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * A bean producing random temperature data every second.
- * The values are written to a Kafka topic (I_AM_HERE).
+ * The values are written to a Kafka topic (i-am-here).
  * The Kafka configuration is specified in the application configuration.
  */
 @Slf4j

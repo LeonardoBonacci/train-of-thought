@@ -15,7 +15,7 @@ import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
 import guru.bonacci.trains.model.Station;
-import guru.bonacci.trains.model.homewardbound.IncomingTrain;
+import guru.bonacci.trains.model.homewardbound.HomewardTrain;
 import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
 import guru.bonacci.trains.sink.model.StationAggregation;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
@@ -25,15 +25,15 @@ public class SinkTopologyProducer {
 
     static final String STATIONS_STORE = "stations-store";
 
-    private static final String STATIONS = "train-stations";
-    private static final String INCOMING = "homeward-bound";
+    private static final String INCOMING_TRAINS = "homeward-bound";
+    private static final String STATIONS = "stations";
 
     
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
-        JsonbSerde<IncomingTrain> trainSerde = new JsonbSerde<>(IncomingTrain.class);
+        JsonbSerde<HomewardTrain> trainSerde = new JsonbSerde<>(HomewardTrain.class);
         JsonbSerde<Station> stationSerde = new JsonbSerde<>(Station.class);
         JsonbSerde<StationAggregation> aggregationSerde = new JsonbSerde<>(StationAggregation.class);
 
@@ -44,7 +44,7 @@ public class SinkTopologyProducer {
                 Consumed.with(Serdes.Integer(), stationSerde));
 
         builder.stream(
-                INCOMING,
+                INCOMING_TRAINS,
                 Consumed.with(Serdes.String(), trainSerde)
             )
         	.selectKey((key, value) -> value.gotoId)

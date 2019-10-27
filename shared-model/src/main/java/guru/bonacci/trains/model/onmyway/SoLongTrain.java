@@ -1,21 +1,21 @@
-package guru.bonacci.trains.model;
+package guru.bonacci.trains.model.onmyway;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @RegisterForReflection
-public class Station {
+public class SoLongTrain {
 
-    public int id;
-    public String name;
+    public String trainName;
     
-   	public double lat;
-   	public double lon;
+    public double lat;
+    public double lon;
+    
+    public int gotoId;
+    public long togo;
 }

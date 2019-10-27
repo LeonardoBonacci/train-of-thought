@@ -11,7 +11,7 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>train-average-aggregator</artifactId>
+	<artifactId>train-time-predictor</artifactId>
 	<properties>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<surefire-plugin.version>2.22.0</surefire-plugin.version>
@@ -45,6 +45,11 @@
 			<artifactId>quarkus-resteasy-jsonb</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>guru.bonacci.trains</groupId>
+			<artifactId>train-shared-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.github.davidmoten</groupId>
 			<artifactId>geo</artifactId>

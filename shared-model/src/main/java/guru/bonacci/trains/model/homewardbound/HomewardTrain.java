@@ -1,13 +1,15 @@
 package guru.bonacci.trains.model.homewardbound;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @RegisterForReflection
-public class IncomingTrain {
+public class HomewardTrain {
 
     public String trainId;
     public String trainName;

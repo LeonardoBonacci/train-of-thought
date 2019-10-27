@@ -5,12 +5,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
+
 import guru.bonacci.trains.model.Station;
-import guru.bonacci.trains.model.homewardbound.HomewardTrain;
+import guru.bonacci.trains.model.onmyway.WayTrain;
 import io.reactivex.Flowable;
 import io.smallrye.reactive.messaging.kafka.KafkaMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -20,39 +21,36 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ApplicationScoped
-public class SinkSimulator {
+public class PredictorSimulator {
 
     private Random random = new Random();
 
     private List<Station> stations = Collections.unmodifiableList(
             Arrays.asList( 
-                    Station.builder().id(0).name("Johnsonville Station").lat(33.01).lon(-115.01).build()
+            		Station.builder().id(6).name("Ngaio Station").lat(33.07).lon(-115.07).build(),
+            		Station.builder().id(7).name("Crofton Downs Station").lat(33.08).lon(-115.08).build(),
+            		Station.builder().id(8).name("Wellington Station").lat(33.09).lon(-115.09).build()
             ));
 
-//    @Outgoing("homeward-bound")
+    @Outgoing("on-may-way")
     public Flowable<KafkaMessage<String, String>> trains() {
         return Flowable.interval(500, TimeUnit.MILLISECONDS)
                 .onBackpressureDrop()
                 .map(tick -> {
-                    Station station = stations.get(0); 
-                    HomewardTrain t = new HomewardTrain("tr>" + random.nextInt(10), "some name", station.id, random.nextLong());
+                	WayTrain t = new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(0).id, stations.get(0).name);
+//                    WayTrain t1 = new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(1).id, stations.get(1).name);
+//                    WayTrain t2 = new WayTrain("tr>" + random.nextInt(10), "some name", 33.05, -115.05, stations.get(2).id, stations.get(2).name);
+
                     String train = 
     	                    "{ \"trainId\" : \"" + t.trainId + "\"" +
     	                    ", \"trainName\" : \"" + t.trainName + "\"" +
+    	                    ", \"lat\" : " + t.lat + 
+                            ", \"lon\" : " + t.lon + 
              				", \"gotoId\" : " + t.gotoId + 
-             				", \"togo\" : " + t.togo + " }";
+             				", \"togo\" : \"" + t.gotoName + "\" }";
 
-                    log.info("station: {}, train: {}", station.name, train);
+                    log.info("train: {}", train);
                     return KafkaMessage.of(t.trainId, train);
                 });
     }
-
-//    @Outgoing("stations")
-    public Flowable<KafkaMessage<Integer, String>> stations() {
-        List<KafkaMessage<Integer, String>> stationsAsJson = stations.stream()
-            .map(s -> KafkaMessage.of(s.id, "{ \"id\" : " + s.id + ", \"name\" : \"" + s.name + "\" }"))
-            .collect(Collectors.toList());
-
-        return Flowable.fromIterable(stationsAsJson);
-    };
 }

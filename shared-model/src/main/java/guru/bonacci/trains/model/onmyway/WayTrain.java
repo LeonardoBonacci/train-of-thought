@@ -1,4 +1,4 @@
-package guru.bonacci.trains.sink.model;
+package guru.bonacci.trains.model.onmyway;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;
@@ -9,8 +9,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @RegisterForReflection
-public class Train {
+public class WayTrain {
 
+    public String trainId;
     public String trainName;
-    public long msUntilArrival;
+    
+    public double lat;
+    public double lon;
+    
+    public int gotoId;
+    public String gotoName;
 }
