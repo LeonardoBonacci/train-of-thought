@@ -1,5 +1,14 @@
 # no more need to run for trains!
 
+## TODO
+finish services
+add truth https://truth.dev/
+use https://www.testcontainers.org/
+make some ksql udf
+make kafka tile38 connector
+make train simulator of wellington
+
+
 ## MANUAL STEPS (for now..)
 * docker run --net=host -it tile38/tile38 tile38-cli
 * SETHOOK trains_at_stations kafka://kafka:9092/i-have-arrived NEARBY trains FENCE ROAM stations * 50
@@ -11,6 +20,7 @@
 
 
 ### useful links
+* https://docs.confluent.io/current/app-development/kafkacat-usage.html
 * https://quarkus.io/guides/kafka-streams-guide
 * https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
 * http://karols.github.io/blog/2019/05/12/native-image-on-windows-10-x64/

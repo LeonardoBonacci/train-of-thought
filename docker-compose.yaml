@@ -92,6 +92,16 @@ services:
 #    networks:
 #      - kafkastreams-network
 #   - kafkastreams-network
+
+  predictor:
+    image: leonardobonacci/train-time-predictor:1.0
+    build:
+      context: predictor
+      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+    environment:
+      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - kafkastreams-network
       
   sink:
     image: leonardobonacci/train-station-sink:1.0

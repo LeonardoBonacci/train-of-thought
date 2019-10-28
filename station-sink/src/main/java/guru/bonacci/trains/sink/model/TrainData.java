@@ -3,8 +3,9 @@ package guru.bonacci.trains.sink.model;
 import java.time.Duration;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.ToString;
 
-
+@ToString
 @RegisterForReflection
 public class TrainData {
 
@@ -18,7 +19,7 @@ public class TrainData {
     }
 
 
-    public static TrainData from(Train train) {
+    public static TrainData from(TrainForAggregation train) {
         return new TrainData(train.trainName, train.msUntilArrival);
     }
 }

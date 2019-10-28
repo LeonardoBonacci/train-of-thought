@@ -1,5 +1,6 @@
 package guru.bonacci.trains.source;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -10,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.api.StatefulRedisConnection;
@@ -27,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * A bean producing random temperature data every second.
- * The values are written to a Kafka topic (I_AM_HERE).
+ * The values are written to a Kafka topic (i-am-here).
  * The Kafka configuration is specified in the application configuration.
  */
 @Slf4j
