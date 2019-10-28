@@ -3,12 +3,11 @@ clear ; docker-compose -f .\docker-compose-ksql.yaml up
 
 clear ; docker run --tty --rm -i --network ks debezium/tooling:1.0
 
-kafkacat -L -b kafka
-kafkacat -P -b kafka -t thetable -K:
-1234:{ "trainname" : "1234", "stationname": "Ngaio" }
+kafkacat -P -b kafka -t i-pass-through -K:
+JVL-WELL:{ "trainname" : "JVL-WELL", "stationname": "Ngaio" }
 
-kafkacat -P -b kafka -t thestream -K:
-abc:{ "trainid": "abc", "trainname": "1234", "otherfield": "bla" }
+kafkacat -P -b kafka -t i-am-here -K:
+abc:{ "trainid": "abc", "trainname": "JVL-WELL", "otherfield": "bla" }
 
 --------------------------------------------------------------------------------
 
@@ -16,35 +15,14 @@ clear ; docker-compose -f .\docker-compose-ksql.yaml exec ksql-cli ksql http://k
 SET 'auto.offset.reset'='earliest';
 
 
-CREATE STREAM thetable_source (trainname STRING, stationname STRING) WITH (KAFKA_TOPIC = 'thetable', VALUE_FORMAT = 'JSON');
-CREATE STREAM thetable_part AS SELECT * FROM thetable_source PARTITION BY trainname;
-CREATE TABLE thetable (trainname VARCHAR, stationname VARCHAR) WITH (KAFKA_TOPIC='THETABLE_PART', VALUE_FORMAT='JSON', KEY='trainname');
+CREATE STREAM i_pass_through_src (trainname STRING, stationname STRING) WITH (KAFKA_TOPIC = 'i-pass-through', VALUE_FORMAT = 'JSON');
+CREATE STREAM i_pass_through_part AS SELECT * FROM i_pass_through_src PARTITION BY trainname;
+CREATE TABLE i_pass_through_table (trainname VARCHAR, stationname VARCHAR) WITH (KAFKA_TOPIC='I_PASS_THROUGH_PART', VALUE_FORMAT='JSON', KEY='trainname');
 
-CREATE STREAM thestream_source (trainid STRING, trainname STRING, otherfield STRING) WITH (KAFKA_TOPIC = 'thestream', VALUE_FORMAT = 'JSON');
-CREATE STREAM thestream AS SELECT * FROM thestream_source PARTITION BY trainname;
+CREATE STREAM i_am_here_src (trainid STRING, trainname STRING, otherfield STRING) WITH (KAFKA_TOPIC = 'i-am-here', VALUE_FORMAT = 'JSON');
+CREATE STREAM i_am_here_stream AS SELECT * FROM i_am_here_src PARTITION BY trainname;
 
-
-CREATE STREAM thejoin4 AS
-  SELECT thestream.trainid, thetable.trainname, thetable.stationname, thestream.otherfield FROM thestream
-  JOIN thetable ON thestream.trainname = thetable.trainname
+CREATE STREAM "i_go_to" AS
+  SELECT i.trainid, i.otherfield, pass.trainname, pass.stationname FROM i_am_here_stream i
+  JOIN i_pass_through_table pass ON i.trainname = pass.trainname
   PARTITION BY trainId;
-
-
-
-
-
-
-
-
-
-
-JVL-WELL-9myhjbx-Ngaio:{ "trainName" : "JVL-WELL", "geoHash" : "9myhjbx", "gotoId" : 7, "togo" : 112359 }
-
-kafkacat -P -b kafka -t on-my-way -K:
-tr>1:{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 7, "gotoName" : "Crofton" }
-tr>1:{ "trainId" : "tr>1", "trainName" : "JVL-WELL", "lat" : 33.05, "lon" : -115.05, "gotoId" : 8, "gotoName" : "Ngaio" }
-
-kafkacat -C -b kafka -t homeward-bound
-kafkacat -C -b kafka -t homeward-bound -f "%k\n"
-
-clear ; docker-compose -f .\docker-compose-predictor.yaml stop predictor ; mvn clean package ; docker-compose -f .\docker-compose-predictor.yaml up --build -d predictor
