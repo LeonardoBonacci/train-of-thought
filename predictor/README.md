@@ -1,5 +1,3 @@
-# no more need to run for trains!
-
 ## COMMANDS
 clear ; mvn clean package ; docker-compose -f .\docker-compose-predictor.yaml up --build
 clear ; docker run --tty --rm -i --network ks debezium/tooling:1.0

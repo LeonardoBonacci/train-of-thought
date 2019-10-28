@@ -2,8 +2,7 @@
 
 ## TODO
 finish services
-add truth https://truth.dev/
-use https://www.testcontainers.org/
+use struct: https://docs.confluent.io/current/ksql/docs/developer-guide/syntax-reference.html#struct-overview
 make some ksql udf
 make kafka tile38 connector
 make train simulator of wellington
