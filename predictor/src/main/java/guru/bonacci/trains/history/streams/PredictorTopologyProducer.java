@@ -44,7 +44,7 @@ public class PredictorTopologyProducer {
 							    			, GeoHash.encodeHash(value.lat, value.lon, 7) 
 							    			, value.gotoName.replaceAll("\\s","")))
         	.join(predictions, 
-        		 (trainId, train) -> trainId, //unnecessary
+        		 (trainId, train) -> trainId, 
         		 (train, prediction) -> new HomewardTrain(train.trainId, train.trainName, train.gotoId, prediction.togo)
         	)
         	.selectKey((k,v) -> v.trainId)

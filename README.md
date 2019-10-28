@@ -1,9 +1,6 @@
 # no more need to run for trains!
 
 ## TODO
-add separate manual test intructions in readme files
-each service its own docker-compose
-change repo name to train-of-thoughts
 finish services
 add truth https://truth.dev/
 use https://www.testcontainers.org/
