@@ -1,3 +1,4 @@
+
 version: '3.5'
 
 services:
@@ -52,7 +53,14 @@ services:
     tty: true
     networks:
       - kafkastreams-network
-      
+
+  tile-server:
+    image: tile38/tile38
+    ports:
+      - "9851:9851"
+    networks:
+      - kafkastreams-network
+
 networks:
   kafkastreams-network:
     name: ks
