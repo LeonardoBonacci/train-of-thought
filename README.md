@@ -1,6 +1,7 @@
 # no more need to run for trains!
 
 ## TODO
+* change repo(name) to 'train of thought' - based on the brilliant lumosity game
 * add design drawings to this readme
 * integrate services
 * use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
