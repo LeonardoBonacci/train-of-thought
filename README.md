@@ -1,24 +1,22 @@
 # no more need to run for trains!
 
 ## TODO
-finish services
-use struct: https://docs.confluent.io/current/ksql/docs/developer-guide/syntax-reference.html#struct-overview
-make some ksql udf
-make kafka tile38 connector
-make train simulator of wellington
-
-
-## MANUAL STEPS (for now..)
-* docker run --net=host -it tile38/tile38 tile38-cli
-* SETHOOK trains_at_stations kafka://kafka:9092/i-have-arrived NEARBY trains FENCE ROAM stations * 50
-
-* docker-compose exec ksql-cli ksql http://ksql-server:8088
-* SET 'ksql.sink.partitions'='3';
-* CREATE STREAM arahants (id STRING, time STRING, nearby MAP<STRING,STRING>) WITH (KAFKA_TOPIC = 'I_HAVE_ARRIVED', VALUE_FORMAT = 'JSON');
-* CREATE STREAM i_am_home AS SELECT id, time as moment, nearby['id'] as station from arahants WHERE nearby IS NOT NULL PARTITION BY id;
+* add design drawings to this readme
+* integrate services
+* use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
+* execute ksql statements at docker/container start-up
+* execute tile38 statements at docker/container start-up
+* use structs: https://docs.confluent.io/current/ksql/docs/developer-guide/syntax-reference.html#struct-overview
+* use testcontainers from integration test
+* use google's truth test library for assertions 
+* make a ksql geo udf (no use case yet)
+* make kafka tile38 connector
+* make train simulator of wellington
 
 ### useful links
 * https://medium.com/@coderunner/debugging-with-kafkacat-df7851d21968
+* https://medium.com/test-kafka-based-applications/https-medium-com-testing-kafka-based-applications-85d8951cec43
+* https://www.testcontainers.org/
 * https://sookocheff.com/post/kafka/kafka-in-a-nutshell/
 * https://blog.newrelic.com/engineering/apache-kafka-event-processing/ 
 > If possible, the best partitioning strategy to use is random.
@@ -45,19 +43,6 @@ make train simulator of wellington
 * http://karols.github.io/blog/2019/05/12/native-image-on-windows-10-x64/
 * https://docs.confluent.io/current/ksql/docs/developer-guide/create-a-stream.html
 
-### MVN 
-* mvn clean package -f source/pom.xml ; docker-compose up --build
-* mvn clean package -f arrival-processor/pom.xml ; docker-compose up --build
-
-
-### debezium
-* docker run --tty --rm -i --network ks debezium/tooling:1.0
-* kafkacat -b kafka:9092 -C -o beginning -q -t average-arrival-times
-* kafkacat -b kafka:9092 -C -o beginning -q -t average-arrival-times -f "%k\n"
-* http sink:8080/train-stations/meta-data
-* http --follow 3372b22d21bf:8080/train-stations/data/0
-
- 
 ### KSQL
 
 check readme in ksql folder
