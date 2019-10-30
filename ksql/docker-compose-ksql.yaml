@@ -39,7 +39,10 @@ services:
     image: confluentinc/cp-ksql-server
     depends_on:
       - kafka
+    volumes:
+      - .:/usr/ext #mounts a custom UDF jar for ksql
     environment:
+      KSQL_KSQL_EXTENTION_DIR: "/usr/ext"
       KSQL_BOOTSTRAP_SERVERS: kafka:9092
       KSQL_LISTENERS: http://0.0.0.0:8088
     networks:

@@ -9,7 +9,6 @@
 * execute tile38 statements at docker/container start-up
 * use testcontainers from integration test
 * use google's truth test library for assertions 
-* make a ksql geo udf (no use case yet)
 * make kafka tile38 connector
 * make train simulator of wellington
 
