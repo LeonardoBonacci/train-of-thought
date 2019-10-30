@@ -7,7 +7,6 @@
 * use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
 * execute ksql statements at docker/container start-up
 * execute tile38 statements at docker/container start-up
-* use structs: https://docs.confluent.io/current/ksql/docs/developer-guide/syntax-reference.html#struct-overview
 * use testcontainers from integration test
 * use google's truth test library for assertions 
 * make a ksql geo udf (no use case yet)
