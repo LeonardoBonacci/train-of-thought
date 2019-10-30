@@ -17,7 +17,6 @@
 		<module>arrival-processor</module>
 		<module>averager</module>
 		<module>predictor</module>
-		<module>shared-model</module>
 		<module>source</module>
 		<module>station-sink</module>
 	</modules>

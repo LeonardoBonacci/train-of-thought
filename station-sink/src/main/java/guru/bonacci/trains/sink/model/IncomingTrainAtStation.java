@@ -2,8 +2,6 @@ package guru.bonacci.trains.sink.model;
 
 import com.google.common.base.Preconditions;
 
-import guru.bonacci.trains.model.Station;
-import guru.bonacci.trains.model.homewardbound.HomewardTrain;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 

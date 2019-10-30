@@ -12,9 +12,9 @@ import org.apache.kafka.streams.kstream.Produced;
 
 import com.github.davidmoten.geo.GeoHash;
 
-import guru.bonacci.trains.model.homewardbound.HomewardTrain;
-import guru.bonacci.trains.model.onmyway.SoLongTrain;
-import guru.bonacci.trains.model.onmyway.WayTrain;
+import guru.bonacci.trains.history.model.HomewardTrain;
+import guru.bonacci.trains.history.model.SoLongTrain;
+import guru.bonacci.trains.history.model.WayTrain;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 import lombok.extern.slf4j.Slf4j;
 

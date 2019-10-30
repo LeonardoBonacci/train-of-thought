@@ -14,9 +14,9 @@ import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
-import guru.bonacci.trains.model.Station;
-import guru.bonacci.trains.model.homewardbound.HomewardTrain;
+import guru.bonacci.trains.sink.model.HomewardTrain;
 import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
+import guru.bonacci.trains.sink.model.Station;
 import guru.bonacci.trains.sink.model.StationAggregation;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 

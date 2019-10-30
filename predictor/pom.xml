@@ -46,11 +46,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>guru.bonacci.trains</groupId>
-			<artifactId>train-shared-model</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.github.davidmoten</groupId>
 			<artifactId>geo</artifactId>
 		</dependency>
