@@ -22,15 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class PredictorTopologyProducer {
 
-    private static final String LIVE_TRAINS = "on-my-way";
-	private static final String TRAIN_TIME_PREDICTIONS = "so-long";
-    private static final String HOMEWARD = "homeward-bound";
+    private static final String LIVE_TRAINS = "ON_MY_WAY";
+	private static final String TRAIN_TIME_PREDICTIONS = "SO_LONG";
+    private static final String HOMEWARD = "HOMEWARD_BOUND";
     
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
-        // more realistically this would be a KTable
+        //TODO this should be a KTable
         GlobalKTable<String, SoLongTrain> predictions = builder.globalTable(
         		TRAIN_TIME_PREDICTIONS,
                 Consumed.with(Serdes.String(), new JsonbSerde<>(SoLongTrain.class)));

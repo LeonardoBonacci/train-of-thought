@@ -24,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 public class HistoryProcessor {
 
 
-    private static final String UNTIL_ARRIVAL = "back-to-the-future";
-    private static final String AVERAGE_ARRIVAL_TIMES = "so-long";
+    private static final String UNTIL_ARRIVAL = "BACK_TO_THE_FUTURE";
+    private static final String AVERAGE_ARRIVAL_TIMES = "SO_LONG";
     
 
     @Produces

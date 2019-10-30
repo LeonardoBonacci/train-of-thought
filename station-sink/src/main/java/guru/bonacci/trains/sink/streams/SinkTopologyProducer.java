@@ -25,8 +25,8 @@ public class SinkTopologyProducer {
 
     static final String STATIONS_STORE = "stations-store";
 
-    private static final String TRAINS = "homeward-bound";
-    private static final String STATIONS = "stations";
+    private static final String TRAINS = "HOMEWARD_BOUND";
+    private static final String STATIONS = "STATIONS";
 
     
     @Produces

@@ -25,10 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ArrivalProcessor {
 
 
-    private static final String UNTIL_ARRIVAL = "back-to-the-future";
+    private static final String UNTIL_ARRIVAL = "BACK_TO_THE_FUTURE";
     
-    private static final String TRAINS = "i-am-here";
-    private static final String AT_STATIONS = "i-am-home";
+    private static final String TRAINS = "I_AM_HERE";
+    private static final String AT_STATION = "I_AM_HOME";
 
 
     @Produces
@@ -44,7 +44,7 @@ public class ArrivalProcessor {
         );
 
         KStream<String, ArrivalAt> atStations = builder.stream(
-        		AT_STATIONS, 
+        		AT_STATION, 
         		Consumed.with(Serdes.String(), atStationSerde)
         );
 
