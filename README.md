@@ -1,32 +1,28 @@
 # no more need to run for trains!
 
 ## TODO
-* change repo(name) to 'train of thought' - based on the brilliant lumosity game
 * add design drawings to this readme
 * integrate services
 * use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
-* execute ksql statements at docker/container start-up
-* execute tile38 statements at docker/container start-up
-* use testcontainers from integration test
-* use google's truth test library for assertions 
-* make kafka tile38 connector
 * make train simulator of wellington
+* tune partitions
+* compile services to executables and 'sync' with partitions
 
 ### useful links
+* https://lordofthejars.github.io/quarkus-cheat-sheet/
+* https://www.udemy.com/course/java-application-performance-and-memory-management/
+* https://www.udemy.com/course/a-comprehensive-introduction-to-java-virtual-machine-jvm/
+* https://www.udemy.com/course/jvm-security-the-java-sandbox-model/
 * https://medium.com/@coderunner/debugging-with-kafkacat-df7851d21968
 * https://medium.com/test-kafka-based-applications/https-medium-com-testing-kafka-based-applications-85d8951cec43
 * https://www.testcontainers.org/
 * https://sookocheff.com/post/kafka/kafka-in-a-nutshell/
 * https://blog.newrelic.com/engineering/apache-kafka-event-processing/ 
-> If possible, the best partitioning strategy to use is random.
-> null keys may provide better distribution and prevent potential hot spotting issues in cases where some keys may appear more than others.
 * https://blog.newrelic.com/engineering/effective-strategies-kafka-topic-partitioning/
 * https://docs.confluent.io/current/app-development/kafkacat-usage.html
 * https://berlinbuzzwords.de/sites/berlinbuzzwords.de/files/media/documents/geo-analytics-with-kafka-v1.0.pdf
 * https://www.confluent.io/blog/build-udf-udaf-ksql-5-0
 * https://github.com/gschmutz/various-demos/tree/master/kafka-geofencing
-* https://hackernoon.com/writing-your-own-sink-connector-for-your-kafka-stack-fa7a7bc201ea
-* https://github.com/skynyrd/kafka-connect-elastic-sink
 * https://quarkus.io/guides/kafka-streams-guide
 * https://github.com/quarkusio/quarkus-quickstarts
 * https://docs.confluent.io/current/ksql/docs/developer-guide/query-with-structured-data.html
@@ -39,8 +35,13 @@
 * https://tile38.com/topics/replication/
 * https://docs.confluent.io/current/ksql/docs/installation/install-ksql-with-docker.html 
 * https://dev.to/skhmt/creating-a-native-executable-in-windows-with-graalvm-3g7f
+* https://medium.com/graalvm/libgraal-graalvm-compiler-as-a-precompiled-graalvm-native-image-26e354bee5c
+* https://www.infoq.com/presentations/graalvm-performance/
 * http://karols.github.io/blog/2019/05/12/native-image-on-windows-10-x64/
 * https://docs.confluent.io/current/ksql/docs/developer-guide/create-a-stream.html
+* https://medium.com/@jponge/the-graalvm-frenzy-f54257f5932c
+* https://hackernoon.com/why-the-java-community-should-embrace-graalvm-abd3ea9121b5
+* https://chrisseaton.com/truffleruby/tenthings/
 
 ### KSQL
 

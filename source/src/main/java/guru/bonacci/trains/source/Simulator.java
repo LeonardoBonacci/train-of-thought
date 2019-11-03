@@ -7,21 +7,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
-import com.lambdaworks.redis.RedisClient;
-import com.lambdaworks.redis.api.StatefulRedisConnection;
-import com.lambdaworks.redis.api.sync.RedisCommands;
-import com.lambdaworks.redis.codec.StringCodec;
-import com.lambdaworks.redis.output.StatusOutput;
-import com.lambdaworks.redis.protocol.CommandArgs;
-import com.lambdaworks.redis.protocol.CommandType;
-
-import io.quarkus.runtime.StartupEvent;
 import io.reactivex.Flowable;
 import io.smallrye.reactive.messaging.kafka.KafkaMessage;
 import lombok.Builder;
@@ -48,31 +39,6 @@ public class Simulator {
             ));
 
 
-     void onStart(@Observes StartupEvent ev) {
-         log.info("Application has started");
-         RedisClient client = RedisClient.create("redis://tile-server:9851");
-         StatefulRedisConnection<String, String> connection = client.connect();
-         RedisCommands<String, String> sync = connection.sync();
-         StringCodec codec = StringCodec.UTF8;
-
-         stations.forEach(st -> {
-	         sync.dispatch(CommandType.SET,
-	                     new StatusOutput<>(codec), new CommandArgs<>(codec)
-	                             .add("stations") // internal collection name
-	                             .add(st.id)
-	                             .add("POINT")
-	                             .add(st.lat)
-	                             .add(st.lon));
-	
-	         String tileResp = sync.dispatch(CommandType.GET,
-	                 new StatusOutput<>(codec), new CommandArgs<>(codec)
-	                         .add("stations")
-	                         .add(st.name));
-	         log.info(tileResp);
-         });
-     }
-
-
      Random random = new Random();
 
      List<Train> trains = Collections.unmodifiableList(
@@ -84,6 +50,19 @@ public class Simulator {
             		 						.build())
      		);
 
+     @Outgoing("STATIONS")
+     public Flowable<KafkaMessage<Integer, String>> stations() {
+    	 List<KafkaMessage<Integer, String>> stationsAsJson = stations.stream()
+             .map(s -> KafkaMessage.of(s.id, 
+            		 "{ \"id\" : " + s.id +  
+                     ", \"name\" : \"" + s.name + "\"" + 
+                     ", \"lat\" : " + s.lat + 
+                     ", \"lon\" : " + s.lon + "}"))
+             .collect(Collectors.toList());
+
+         return Flowable.fromIterable(stationsAsJson);
+     };
+     
      @Outgoing("I_AM_HERE")                             
      public Flowable<KafkaMessage<String, String>> trainEvents() {
         return Flowable.interval(500, TimeUnit.MILLISECONDS)    
@@ -97,25 +76,6 @@ public class Simulator {
 							 ", \"moment\" : \"" + Instant.now() + "\"" + 
                              ", \"lat\" : " + train.lat + 
                              ", \"lon\" : " + train.lon + "}";
-
-                    // ----------------------------------------------------
-                    // FOR NOW WE SEND THE TRAIN EVENT STRAIGHT TO THE tile38-server
-                    RedisClient client = RedisClient.create("redis://tile-server:9851");
-                    StatefulRedisConnection<String, String> connection = client.connect();
-                    RedisCommands<String, String> sync = connection.sync();
-
-                    StringCodec codec = StringCodec.UTF8;
-                    sync.dispatch(CommandType.SET,
-                                new StatusOutput<>(codec), new CommandArgs<>(codec)
-                                        .add("trains") // internal collection name
-                                        .add(train.id)
-                                        .add("FIELDS")
-                                        .add("route")
-                                        .add(train.route)
-                                        .add("POINT")
-                                        .add(train.lat)
-                                        .add(train.lon));
-                    // ----------------------------------------------------
 
                     log.info("emitting train event: {}", payload);
                     return KafkaMessage.of(train.id, payload);
