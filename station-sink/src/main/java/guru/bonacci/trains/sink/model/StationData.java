@@ -22,7 +22,7 @@ public class StationData {
         this.expected = trains;
     }
 
-    public static StationData from(StationAggregation aggregation) {
+    public static StationData from(StationAggr aggregation) {
         return new StationData(
                 aggregation.stationId,
                 aggregation.stationName,

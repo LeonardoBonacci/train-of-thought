@@ -15,7 +15,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.apache.kafka.streams.state.StreamsMetadata;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import guru.bonacci.trains.sink.model.StationAggregation;
+import guru.bonacci.trains.sink.model.StationAggr;
 import guru.bonacci.trains.sink.model.StationData;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,7 +57,7 @@ public class InteractiveQueries {
         }
         else if (metadata.host().equals(host)) {
             log.info("Found data for key {} locally", id);
-            StationAggregation result = getStationStore().get(id);
+            StationAggr result = getStationStore().get(id);
 
             if (result != null) {
                 return StationDataResult.found(StationData.from(result));
@@ -72,7 +72,7 @@ public class InteractiveQueries {
         }
     }
 
-    private ReadOnlyKeyValueStore<Integer, StationAggregation> getStationStore() {
+    private ReadOnlyKeyValueStore<Integer, StationAggr> getStationStore() {
         while (true) {
             try {
                 return streams.store(SinkTopologyProducer.STATIONS_STORE, QueryableStoreTypes.keyValueStore());

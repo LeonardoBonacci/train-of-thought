@@ -19,7 +19,7 @@ public class TrainData {
     }
 
 
-    public static TrainData from(TrainForAggregation train) {
+    public static TrainData from(TrainForAggr train) {
         return new TrainData(train.trainName, train.msUntilArrival);
     }
 }

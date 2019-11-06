@@ -8,21 +8,21 @@ import lombok.ToString;
 
 @ToString
 @RegisterForReflection
-public class StationAggregation {
+public class StationAggr {
 
     public int stationId;
     public String stationName;
     
     // no need for synchronization just yet...
 //TODO use: org.apache.commons.collections4.map.PassiveExpiringMap
-    public Map<String, TrainForAggregation> trains = new HashMap<>();
+    public Map<String, TrainForAggr> trains = new HashMap<>();
 
     
-    public StationAggregation updateFrom(IncomingTrainAtStation incoming) {
+    public StationAggr updateFrom(IncomingTrainAtStation incoming) {
         stationId = incoming.gotoId;
         stationName = incoming.gotoName;
 
-        trains.put(incoming.trainId, new TrainForAggregation(incoming.trainName, incoming.togo));
+        trains.put(incoming.trainId, new TrainForAggr(incoming.trainName, incoming.togo));
         
         return this;
     }

@@ -9,7 +9,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @RegisterForReflection
-public class TrainForAggregation {
+public class TrainForAggr {
 
     public String trainName;
     public long msUntilArrival;

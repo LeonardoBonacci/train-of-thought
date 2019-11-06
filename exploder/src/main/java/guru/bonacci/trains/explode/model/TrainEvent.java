@@ -1,4 +1,4 @@
-package guru.bonacci.trains.arrivals.model;
+package guru.bonacci.trains.explode.model;
 
 import java.time.Instant;
 

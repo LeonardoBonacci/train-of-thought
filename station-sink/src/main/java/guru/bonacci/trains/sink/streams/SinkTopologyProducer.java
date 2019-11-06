@@ -17,7 +17,7 @@ import org.apache.kafka.streams.state.Stores;
 import guru.bonacci.trains.sink.model.HomewardTrain;
 import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
 import guru.bonacci.trains.sink.model.Station;
-import guru.bonacci.trains.sink.model.StationAggregation;
+import guru.bonacci.trains.sink.model.StationAggr;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
 
 @ApplicationScoped
@@ -35,7 +35,7 @@ public class SinkTopologyProducer {
 
         JsonbSerde<HomewardTrain> trainSerde = new JsonbSerde<>(HomewardTrain.class);
         JsonbSerde<Station> stationSerde = new JsonbSerde<>(Station.class);
-        JsonbSerde<StationAggregation> aggregationSerde = new JsonbSerde<>(StationAggregation.class);
+        JsonbSerde<StationAggr> aggregationSerde = new JsonbSerde<>(StationAggr.class);
 
         KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(STATIONS_STORE);
 
@@ -55,9 +55,9 @@ public class SinkTopologyProducer {
             )
             .groupByKey(Grouped.with(Serdes.Integer(),  new JsonbSerde<>(IncomingTrainAtStation.class)))
             .aggregate(
-                    StationAggregation::new,
+                    StationAggr::new,
                     (stationId, value, aggregation) -> aggregation.updateFrom(value),
-                    Materialized.<Integer, StationAggregation> as(storeSupplier)
+                    Materialized.<Integer, StationAggr> as(storeSupplier)
                         .withKeySerde(Serdes.Integer())
                         .withValueSerde(aggregationSerde)
             )

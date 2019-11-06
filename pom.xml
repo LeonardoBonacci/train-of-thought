@@ -16,6 +16,7 @@
 	<modules>
 		<module>arrival-processor</module>
 		<module>averager</module>
+		<module>exploder</module>
 		<module>predictor</module>
 		<module>source</module>
 		<module>station-sink</module>

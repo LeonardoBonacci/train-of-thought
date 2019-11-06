@@ -7,7 +7,7 @@ services:
       KAFKA_LOG_MESSAGE_TIMESTAMP_TYPE: LogAppendTime
       ADV_HOST: host.docker.internal  # Change to 192.168.99.100 if using Docker Toolbox
       RUNTESTS: 0                     # Disable Running tests so the cluster starts faster
-      DISABLE: hive,pulsar,azure-documentdb,blockchain,bloomberg,cassandra,coap,druid,elastic,elastic5,elastic6,ftp,hazelcast,hbase,influxdb,jms,kudu,mongodb,mqtt,redis,rethink,voltdb,yahoo,hdfs,jdbc,elasticsearch,s3,twitter
+      DISABLE: rabbitmq,hive,pulsar,azure-documentdb,blockchain,bloomberg,cassandra,coap,druid,elastic,elastic5,elastic6,ftp,hazelcast,hbase,influxdb,jms,kudu,mongodb,mqtt,redis,rethink,voltdb,yahoo,hdfs,jdbc,elasticsearch,s3,twitter
     ports:
       - 2181:2181                 # Zookeeper
       - 3030:3030                 # Landoop UI
@@ -21,24 +21,25 @@ services:
     networks:
       - kafkastreams-network
       
-#  ksql-server:
-#    image: confluentinc/cp-ksql-server:5.1.0
-#    depends_on:
-#      - kafka
-#    environment:
-#      KSQL_BOOTSTRAP_SERVERS: kafka:9092
-#      KSQL_LISTENERS: http://0.0.0.0:8088
-#    networks:
-#      - kafkastreams-network
-  
-#  ksql-cli:
-#    image: confluentinc/cp-ksql-cli:5.1.0
-#    depends_on:
-#      - ksql-server
-#    entrypoint: /bin/sh
-#    tty: true
-#    networks:
-#      - kafkastreams-network
+  ksql-server:
+    image: confluentinc/cp-ksql-server
+    volumes:
+      - ./ksql:/usr/ext #mounts a custom UDF jar for ksql
+    environment:
+      KSQL_KSQL_EXTENTION_DIR: "/usr/ext"
+      KSQL_BOOTSTRAP_SERVERS: host.docker.internal:9092
+      KSQL_LISTENERS: http://0.0.0.0:8088
+    networks:
+      - kafkastreams-network
+      
+  ksql-cli:
+    image: confluentinc/cp-ksql-cli
+    depends_on:
+      - ksql-server
+    entrypoint: /bin/sh
+    tty: true
+    networks:
+      - kafkastreams-network
 
   tile38:
     image: tile38/tile38
@@ -54,6 +55,16 @@ services:
       dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
     environment:
       KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
+    networks:
+      - kafkastreams-network
+
+  exploder:
+    image: leonardobonacci/train-exploder:1.0
+    build:
+      context: exploder
+      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+    environment:
+      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: host.docker.internal:9092
     networks:
       - kafkastreams-network
 
