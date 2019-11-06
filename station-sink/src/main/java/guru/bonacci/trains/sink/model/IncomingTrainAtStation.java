@@ -13,13 +13,11 @@ public class IncomingTrainAtStation extends HomewardTrain {
 
     
     public IncomingTrainAtStation(HomewardTrain train, Station station) {
-    	Preconditions.checkArgument(train.gotoId == station.id, 
-    			"This is no good: train.stationId %s and station.id %s", train.gotoId, station.id);
+    	super(train.id, train.route, train.name, train.togo, train._goto);
+
+    	Preconditions.checkArgument(train._goto == station.id, 
+    			"This is no good: train.stationId %d and station.id %d", train._goto, station.id);
     	
-    	this.trainId = train.trainId;
-    	this.trainName = train.trainName;
-    	this.gotoId = train.gotoId;
     	this.gotoName = station.name;
-    	this.togo = train.togo;
     }
 }

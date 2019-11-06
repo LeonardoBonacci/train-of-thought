@@ -35,8 +35,9 @@ public class SinkTopologyProducer {
 
         JsonbSerde<HomewardTrain> trainSerde = new JsonbSerde<>(HomewardTrain.class);
         JsonbSerde<Station> stationSerde = new JsonbSerde<>(Station.class);
+        JsonbSerde<IncomingTrainAtStation> incomingTrainSerde = new JsonbSerde<>(IncomingTrainAtStation.class);
         JsonbSerde<StationAggr> aggregationSerde = new JsonbSerde<>(StationAggr.class);
-
+        
         KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(STATIONS_STORE);
 
         GlobalKTable<Integer, Station> stations = builder.globalTable(
@@ -47,14 +48,14 @@ public class SinkTopologyProducer {
                 TRAINS,
                 Consumed.with(Serdes.String(), trainSerde)
             )
-        	.selectKey((key, value) -> value.gotoId)
+        	.selectKey((key, value) -> value._goto) 
             .join(
                     stations,
                     (stationId, train) -> stationId,
                     (train, station) -> new IncomingTrainAtStation(train, station)
             )
-            .groupByKey(Grouped.with(Serdes.Integer(),  new JsonbSerde<>(IncomingTrainAtStation.class)))
-            .aggregate(
+            .groupByKey(Grouped.with(Serdes.Integer(), incomingTrainSerde))
+            .aggregate( // aggregate by stationId
                     StationAggr::new,
                     (stationId, value, aggregation) -> aggregation.updateFrom(value),
                     Materialized.<Integer, StationAggr> as(storeSupplier)

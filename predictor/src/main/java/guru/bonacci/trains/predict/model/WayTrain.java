@@ -1,4 +1,4 @@
-package guru.bonacci.trains.history.model;
+package guru.bonacci.trains.predict.model;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;
@@ -9,11 +9,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @RegisterForReflection
-public class HomewardTrain {
+public class WayTrain {
 
-    public String trainId;
-    public String trainName;
-    
-    public int gotoId;
-    public long togo;
+    public String id;
+    public int route;
+    public String name;
+    public double lat;
+    public double lon;
+    public int _goto;
 }

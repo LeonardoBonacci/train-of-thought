@@ -5,17 +5,21 @@ import lombok.ToString;
 
 @ToString
 @RegisterForReflection
-public class TrainToStationEvent extends TrainEvent {
+public class TrainToStationEvent {
 
-    public int station;
+    public String id;
+    public int route;
+    public String name;
+    public double lat;
+    public double lon;
+    public int _goto;
     
     public TrainToStationEvent(TrainOnRoute trainOnRoute, int station) {
-    	super(	trainOnRoute.train.id, 
-    			trainOnRoute.route.route,
-    			trainOnRoute.train.name,
-    			trainOnRoute.train.moment,
-    			trainOnRoute.train.lat,
-    			trainOnRoute.train.lon);
-    	this.station = station;
+    	this.id = trainOnRoute.train.id; 
+    	this.route = trainOnRoute.route.route;
+    	this.name = trainOnRoute.train.name;
+    	this.lat = trainOnRoute.train.lat;
+    	this.lon = trainOnRoute.train.lon;
+    	this._goto = station;
     }
 }

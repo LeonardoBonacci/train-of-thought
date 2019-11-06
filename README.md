@@ -37,6 +37,14 @@ CREATE STREAM on_route AS SELECT fields->route AS ROUTE, mystringtoint(nearby->i
 						 	WHERE nearby IS NOT NULL
 						 	PARTITION BY ROUTE;
 
+* If all services run and your laptop can handle a bit more, launch two sink container to check out the load balancing
+* docker-compose stop sink
+* docker-compose up -d --scale sink=3 
+* Now query the REST endpoint, first to find the machine name, then to query the data:
+* docker run --tty --rm -i --network ks debezium/tooling:1.0
+* http sink:8080/train-stations/meta-data
+* http --follow efa957f79f44:8080/train-stations/data/1
+
 
 ### USEFUL LINKS
 * https://lordofthejars.github.io/quarkus-cheat-sheet/

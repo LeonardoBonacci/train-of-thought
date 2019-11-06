@@ -11,9 +11,10 @@ import lombok.ToString;
 @RegisterForReflection
 public class HomewardTrain {
 
-    public String trainId;
-    public String trainName;
+    public String id;
+    public int route;
+    public String name;
     
-    public int gotoId;
-    public long togo;
+	public long togo; //in ms
+	public int _goto; //station
 }

@@ -19,10 +19,10 @@ public class StationAggr {
 
     
     public StationAggr updateFrom(IncomingTrainAtStation incoming) {
-        stationId = incoming.gotoId;
+        stationId = incoming._goto;
         stationName = incoming.gotoName;
 
-        trains.put(incoming.trainId, new TrainForAggr(incoming.trainName, incoming.togo));
+        trains.put(incoming.id, new TrainForAggr(incoming.name, incoming.togo));
         
         return this;
     }
