@@ -7,7 +7,6 @@ import lombok.ToString;
 @RegisterForReflection
 public class OnRoute {
 
-	// KSQL forces us the capitals
-    public int ROUTE;
-    public int STATION;
+	public int ROUTE;
+    public int station;
 }

@@ -10,9 +10,9 @@ import lombok.ToString;
 public class TrainEvent {
 
     public String id;
-    public Integer route;
+    public int route;
     public String name;
     public Instant moment;
-    public Double lat;
-    public Double lon;
+    public double lat;
+    public double lon;
 }

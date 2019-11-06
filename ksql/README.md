@@ -38,7 +38,7 @@ CREATE STREAM i_have_arrived_src (	id STRING,
 				                      		meters INT>)
         WITH (KAFKA_TOPIC='I_HAVE_ARRIVED', VALUE_FORMAT='JSON');
 
-CREATE STREAM i_am_home AS 	SELECT id, time as "moment", mystringtoint(nearby->id) as "station" 
+CREATE STREAM i_am_home2 AS 	SELECT id, time as "moment", mystringtoint(nearby->id) as "station" 
 						 	FROM i_have_arrived_src 
 						 	WHERE nearby IS NOT NULL 
 						 	PARTITION BY id;

@@ -22,13 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ApplicationScoped
-public class ArrivalProcessor {
+public class ArrivalTopologyProducer {
 
-
-    private static final String UNTIL_ARRIVAL = "BACK_TO_THE_FUTURE";
+    private static final String UNTIL_ARRIVAL_TOPIC = "BACK_TO_THE_FUTURE";
     
-    private static final String TRAINS = "I_AM_HERE";
-    private static final String AT_STATION = "I_AM_HOME";
+    private static final String TRAINS_TOPIC = "I_AM_HERE";
+    private static final String AT_STATION_TOPIC = "I_AM_HOME";
 
 
     @Produces
@@ -37,43 +36,46 @@ public class ArrivalProcessor {
 
         JsonbSerde<TrainEvent> trainSerde = new JsonbSerde<>(TrainEvent.class);
         JsonbSerde<ArrivalAt> atStationSerde = new JsonbSerde<>(ArrivalAt.class);
+        JsonbSerde<FutureArrival> futureSerde = new JsonbSerde<>(FutureArrival.class);
+
         
         KStream<String, TrainEvent> trains = builder.stream(                                                       
-                TRAINS,
+                TRAINS_TOPIC,
                 Consumed.with(Serdes.String(), trainSerde)
         );
 
         KStream<String, ArrivalAt> atStations = builder.stream(
-        		AT_STATION, 
+        		AT_STATION_TOPIC, 
         		Consumed.with(Serdes.String(), atStationSerde)
         );
 
         trains.join(atStations,
-                (trainVal, atStationVal) -> {
+                (train, atStation) -> {
         			log.info("{} needs {} ms from [{},{}] until station {}", 
-        					trainVal.name, 
-        					Duration.between(trainVal.moment, atStationVal.moment).toMillis(),
-        					trainVal.lat,
-        					trainVal.lon,
-        					atStationVal.station);
+        					train.name, 
+        					Duration.between(train.moment, atStation.moment).toMillis(),
+        					train.lat,
+        					train.lon,
+        					atStation.station);
 
         			return FutureArrival.builder()
-        									.id(trainVal.id)
-        									.name(trainVal.name)
-        									.lat(trainVal.lat)
-        									.lon(trainVal.lon)
-        									.togo(Duration.between(trainVal.moment, atStationVal.moment).toMillis())
-        									._goto(atStationVal.station)
+        									.id(train.id)
+        									.route(train.route)
+        									.name(train.name)
+        									.lat(train.lat)
+        									.lon(train.lon)
+        									.togo(Duration.between(train.moment, atStation.moment).toMillis())
+        									._goto(atStation.station)
         									.build();
 
                 },
-                JoinWindows.of(0).after(Duration.ofMillis(10000)), //add a realistic value here!
+                JoinWindows.of(0).after(Duration.ofHours(1)),
                 Joined.with(Serdes.String(), trainSerde, atStationSerde)
         )
-        .peek((k,v) -> log.info("TOGO: " + v))
+        .peek((k,v) -> log.info("Still to go: {}", v))
         .to(                                                          
-        		UNTIL_ARRIVAL,
-                Produced.with(Serdes.String(), new JsonbSerde<>(FutureArrival.class))
+        		UNTIL_ARRIVAL_TOPIC,
+                Produced.with(Serdes.String(), futureSerde)
         );
 
         return builder.build();

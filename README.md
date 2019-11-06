@@ -8,7 +8,37 @@
 * tune partitions
 * compile services to executables and 'sync' with partitions
 
-### useful links
+## RUN
+* docker run --net=host -it tile38/tile38 tile38-cli
+* SETHOOK trains_at_stations kafka://host.docker.internal:9092/I_HAVE_ARRIVED NEARBY trains FENCE ROAM stations * 50
+
+* docker-compose exec ksql-cli ksql http://ksql-server:8088
+* SET 'auto.offset.reset'='earliest';
+* SET 'ksql.sink.partitions'='1';
+* PRINT 'I_HAVE_ARRIVED' FROM BEGINNING;
+
+CREATE STREAM i_have_arrived_src (	id STRING,
+							 		time STRING,
+							 		fields STRUCT<route INT>,
+			                 		nearby STRUCT<
+				                    	  	key STRING,
+				                      	  	id STRING,
+				                      	  	object STRING,
+				                      		meters INT>)
+        WITH (KAFKA_TOPIC='I_HAVE_ARRIVED', VALUE_FORMAT='JSON');
+
+CREATE STREAM i_am_home AS 	SELECT ID, time as "moment", mystringtoint(nearby->id) as "station" 
+						 	FROM i_have_arrived_src 
+						 	WHERE nearby IS NOT NULL 
+						 	PARTITION BY ID;
+
+CREATE STREAM on_route AS SELECT fields->route AS ROUTE, mystringtoint(nearby->id) AS "station" 
+							FROM i_have_arrived_src 
+						 	WHERE nearby IS NOT NULL
+						 	PARTITION BY ROUTE;
+
+
+### USEFUL LINKS
 * https://lordofthejars.github.io/quarkus-cheat-sheet/
 * https://www.udemy.com/course/java-application-performance-and-memory-management/
 * https://www.udemy.com/course/a-comprehensive-introduction-to-java-virtual-machine-jvm/
@@ -42,40 +72,3 @@
 * https://medium.com/@jponge/the-graalvm-frenzy-f54257f5932c
 * https://hackernoon.com/why-the-java-community-should-embrace-graalvm-abd3ea9121b5
 * https://chrisseaton.com/truffleruby/tenthings/
-
-### KSQL
-
-check readme in ksql folder
-
-## RUN
-
-* docker run --net=host -it tile38/tile38 tile38-cli
-* SETHOOK trains_at_stations kafka://host.docker.internal:9092/I_HAVE_ARRIVED NEARBY trains FENCE ROAM stations * 50
-
-* docker-compose exec ksql-cli ksql http://ksql-server:8088
-* SET 'auto.offset.reset'='earliest';
-* SET 'ksql.sink.partitions'='1';
-* PRINT 'I_HAVE_ARRIVED' FROM BEGINNING;
-
-CREATE STREAM i_have_arrived_src (	id STRING,
-							 		time STRING,
-							 		fields STRUCT<route INT>,
-			                 		nearby STRUCT<
-				                    	  	key STRING,
-				                      	  	id STRING,
-				                      	  	object STRING,
-				                      		meters INT>)
-        WITH (KAFKA_TOPIC='I_HAVE_ARRIVED', VALUE_FORMAT='JSON');
-
-CREATE STREAM i_am_home AS 	SELECT id, time as moment, mystringtoint(nearby->id) as station 
-						 	FROM i_have_arrived_src 
-						 	WHERE nearby IS NOT NULL 
-						 	PARTITION BY id;
-
-CREATE STREAM on_route AS SELECT fields->route AS route, mystringtoint(nearby->id) AS station
-							FROM i_have_arrived_src 
-						 	WHERE nearby IS NOT NULL
-						 	PARTITION BY route;
-
-
-

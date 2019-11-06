@@ -10,13 +10,13 @@ import lombok.ToString;
 @RegisterForReflection
 public class Route {
 
-    public Integer route;
+    public int route;
     public Set<Integer> stations = new HashSet<>();
     
 
     public Route updateFrom(OnRoute incoming) {
         route = incoming.ROUTE;
-        stations.add(incoming.STATION);
+        stations.add(incoming.station);
         
         return this;
     }

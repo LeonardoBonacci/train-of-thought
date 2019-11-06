@@ -37,13 +37,13 @@ public class ExploderTopologyProducer {
     private static final String ON_ROUTE_TOPIC = "ON_ROUTE";
 
 
-    @Produces
+    @SuppressWarnings("deprecation")
+	@Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
         JsonbSerde<TrainEvent> trainSerde = new JsonbSerde<>(TrainEvent.class);
         JsonbSerde<OnRoute> onRouteSerde = new JsonbSerde<>(OnRoute.class);
-
         JsonbSerde<Route> routeSerde = new JsonbSerde<>(Route.class);
         JsonbSerde<TrainToStationEvent> trainToStationEventSerde = new JsonbSerde<>(TrainToStationEvent.class);
         
@@ -67,7 +67,7 @@ public class ExploderTopologyProducer {
         	trains.join(
 		        		routes, 
 		        		(train, route) -> new TrainOnRoute(train, route),
-		        		JoinWindows.of(0).before(Duration.ofDays(1)), 
+		        		JoinWindows.of(0).before(Duration.ofDays(1)), // whatever stations were passed since yesterday
 		        		Joined.with(Serdes.String(), trainSerde, routeSerde)
 	        	)
         		.peek((k,v) -> log.info(k + " >>> " + v))

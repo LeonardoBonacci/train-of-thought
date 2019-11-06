@@ -7,9 +7,9 @@ import lombok.ToString;
 @RegisterForReflection
 public class TrainToStationEvent extends TrainEvent {
 
-    public Integer station;
+    public int station;
     
-    public TrainToStationEvent(TrainOnRoute trainOnRoute, Integer station) {
+    public TrainToStationEvent(TrainOnRoute trainOnRoute, int station) {
     	super(	trainOnRoute.train.id, 
     			trainOnRoute.route.route,
     			trainOnRoute.train.name,

@@ -1,17 +1,20 @@
 package guru.bonacci.trains.arrivals.model;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Builder;
 import lombok.ToString;
 
-@ToString
 @Builder
+@ToString
+@RegisterForReflection
 public class FutureArrival {
 
-	private final String id;
-	private final String name;
-	private final Double lat;
-	private final Double lon;
+	public String id;
+	public int route;
+	public String name;
+	public double lat;
+	public double lon;
 
-	private final Long togo;
-	private final String _goto;
+	public long togo; //in ms
+	public int _goto;
 }
