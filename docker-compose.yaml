@@ -78,16 +78,15 @@ services:
     networks:
       - kafkastreams-network
 
-#  averager:
-#    image: leonardobonacci/train-average-aggregator:1.0
-#    build:
-#      context: averager
-#      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
-#    environment:
-#      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: kafka:9092
-#    networks:
-#      - kafkastreams-network
-#   - kafkastreams-network
+  averager:
+    image: leonardobonacci/train-average-aggregator:1.0
+    build:
+      context: averager
+      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
+    environment:
+      QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS: host.docker.internal:9092
+    networks:
+      - kafkastreams-network
 
 #  predictor:
 #    image: leonardobonacci/train-time-predictor:1.0

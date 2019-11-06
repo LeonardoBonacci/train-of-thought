@@ -1,4 +1,4 @@
-package guru.bonacci.trains.history.model;
+package guru.bonacci.trains.average.model;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.ToString;
@@ -8,10 +8,12 @@ import lombok.ToString;
 public class FutureArrival {
 
 	public String id;
+	public int route;
 	public String name;
-	public Double lat;
-	public Double lon;
+	public double lat;
+	public double lon;
 
-	public Long togo;
-	public String station;
+	public long togo; //in ms
+	public int _goto; //station
+
 }

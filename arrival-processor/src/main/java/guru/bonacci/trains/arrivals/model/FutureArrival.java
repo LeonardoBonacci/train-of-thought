@@ -16,5 +16,5 @@ public class FutureArrival {
 	public double lon;
 
 	public long togo; //in ms
-	public int _goto;
+	public int _goto; //station
 }
