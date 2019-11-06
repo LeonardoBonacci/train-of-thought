@@ -24,8 +24,10 @@ import guru.bonacci.trains.explode.model.TrainEvent;
 import guru.bonacci.trains.explode.model.TrainOnRoute;
 import guru.bonacci.trains.explode.model.TrainToStationEvent;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @ApplicationScoped
 public class ExploderTopologyProducer {
 
@@ -65,9 +67,10 @@ public class ExploderTopologyProducer {
         	trains.join(
 		        		routes, 
 		        		(train, route) -> new TrainOnRoute(train, route),
-		        		JoinWindows.of(Duration.ofDays(1)),
+		        		JoinWindows.of(0).before(Duration.ofDays(1)), 
 		        		Joined.with(Serdes.String(), trainSerde, routeSerde)
 	        	)
+        		.peek((k,v) -> log.info(k + " >>> " + v))
         		.flatMap((routeId, trainOnRoute) -> {
 		                List<KeyValue<String, TrainToStationEvent>> result = new ArrayList<>(trainOnRoute.route.stations.size());
 		
