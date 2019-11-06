@@ -69,7 +69,7 @@ public class ArrivalTopologyProducer {
         									.build();
 
                 },
-                JoinWindows.of(0).after(Duration.ofHours(1)),
+                JoinWindows.of(0).after(Duration.ofHours(1)), // join up till an hour in the future
                 Joined.with(Serdes.String(), trainSerde, atStationSerde)
         )
         .peek((k,v) -> log.info("Still to go: {}", v))

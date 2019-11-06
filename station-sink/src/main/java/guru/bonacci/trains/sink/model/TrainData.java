@@ -10,12 +10,12 @@ import lombok.ToString;
 public class TrainData {
 
     public String trainName;
-    public long minutesUntilArrival;
+    public long msUntilArrival;
 
     
     private TrainData(String trainName, long untilArrival) {
         this.trainName = trainName;
-        this.minutesUntilArrival = Duration.ofMillis(untilArrival).toMinutes(); 
+        this.msUntilArrival = Duration.ofMillis(untilArrival).toMillis(); 
     }
 
 

@@ -37,8 +37,10 @@ public class AverageTopologyProducer {
         builder.stream(                                                       
                 UNTIL_ARRIVAL_TOPIC,
                 Consumed.with(Serdes.String(), futureSerde))
-	        .selectKey((key, value) -> value.route + "/" + GeoHash.encodeHash(value.lat, value.lon, 7) + "/" + value._goto)
-	        .peek((k,v) -> log.info(k + " >>> " + v))
+	        .selectKey((key, value) -> String.format("%d/%s/%d",
+										    			value.route,
+										    			GeoHash.encodeHash(value.lat, value.lon, 7), 
+										    			value._goto))
 	        .groupByKey(Grouped.with(Serdes.String(), futureSerde))                                                
 	        .aggregate(                                                   
 	              AvgFutureArrival::new,
@@ -46,6 +48,7 @@ public class AverageTopologyProducer {
 	              Materialized.with(Serdes.String(), avgSerde)
 	        )
 	        .toStream()
+	        .filterNot((k,v) -> v.avg < 0) //FIXME happens rarely but indicates a serious bug - probably Tile38's timestamp
 	        .peek((k,v) -> log.info(k + " >>> " + v))
 	        .to(                                                          
 	    		  AVERAGE_ARRIVAL_TIMES,

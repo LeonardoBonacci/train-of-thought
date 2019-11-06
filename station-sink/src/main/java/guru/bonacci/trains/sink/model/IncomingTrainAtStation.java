@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
+@ToString(callSuper=true)
 @NoArgsConstructor
 public class IncomingTrainAtStation extends HomewardTrain {
 

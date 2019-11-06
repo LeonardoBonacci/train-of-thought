@@ -19,14 +19,16 @@ import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
 import guru.bonacci.trains.sink.model.Station;
 import guru.bonacci.trains.sink.model.StationAggr;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
 public class SinkTopologyProducer {
 
     static final String STATIONS_STORE = "stations-store";
 
-    private static final String TRAINS = "HOMEWARD_BOUND";
-    private static final String STATIONS = "STATIONS";
+    private static final String TRAINS_TOPIC = "HOMEWARD_BOUND";
+    private static final String STATIONS_TOPIC = "STATIONS";
 
     
     @Produces
@@ -41,11 +43,11 @@ public class SinkTopologyProducer {
         KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(STATIONS_STORE);
 
         GlobalKTable<Integer, Station> stations = builder.globalTable(
-                STATIONS,
+                STATIONS_TOPIC,
                 Consumed.with(Serdes.Integer(), stationSerde));
 
         builder.stream(
-                TRAINS,
+                TRAINS_TOPIC,
                 Consumed.with(Serdes.String(), trainSerde)
             )
         	.selectKey((key, value) -> value._goto) 

@@ -11,20 +11,17 @@ import lombok.ToString;
 @RegisterForReflection
 public class StationData {
 
-    public int stationId;
     public String stationName;
     public List<TrainData> expected;
 
     
-    private StationData(int stationId, String stationName, List<TrainData> trains) {
-        this.stationId = stationId;
+    private StationData(String stationName, List<TrainData> trains) {
         this.stationName = stationName;
         this.expected = trains;
     }
 
     public static StationData from(StationAggr aggregation) {
         return new StationData(
-                aggregation.stationId,
                 aggregation.stationName,
                 aggregation.trains.values().stream()
                 				.map(TrainData::from)

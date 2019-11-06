@@ -38,7 +38,7 @@ public class PredictorTopologyProducer {
         GlobalKTable<String, SoLongTrain> predictions = builder.globalTable(
         		TIME_PREDICTIONS_TOPIC,
                 Consumed.with(Serdes.String(), predictionsSerde));
-        
+
         builder.stream(
                 LIVE_TRAINS_TOPIC,
                 Consumed.with(Serdes.String(), waySerde)
@@ -57,7 +57,7 @@ public class PredictorTopologyProducer {
         			HOMEWARD_TOPIC, 
         			Produced.with(Serdes.String(), homewardSerde)
 			);
-        
+
         return builder.build();
     }
 }
