@@ -1,14 +1,24 @@
-# no more need to run for trains!
+# Train of Thought
 
-## TODO
-* add design drawings to this readme
-* integrate services
-* use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
-* make train simulator of wellington
-* tune partitions
-* compile services to executables and 'sync' with partitions
+<what it does - what it contributes to mankind>. It is a simple programming experiment with as underlying purpose to show (to anyone who'd like to see) how we can transform and manipulate data (streams) into useful and thus valuable information. For this reason, and to allow it to coordinate any transportation monitoring system without complex interfacing, only a minimum (too little really) of input data is required for it to function: train and stations; even the train routs are deduced! Its architecture is highly scalable, and with the right ops-people it could monitor the entire public transportation system of any country.  
 
-## RUN
+The unconventional and unprofessional (kafka topic, mvn module, and class) names are chosen to facilitate communicating the app's inner workings to my wife :) 
+
+
+## Inner Workings
+
+<add a drawing here + links to separate readme files>
+* source 
+* kafka connector
+* KSQL queries
+* exploder
+* on-my-way
+* predictor
+* station-sink
+* arrival-processor
+* average-aggregator	
+	
+## Run Me
 * docker run --net=host -it tile38/tile38 tile38-cli
 * SETHOOK trains_at_stations kafka://host.docker.internal:9092/I_HAVE_ARRIVED NEARBY trains FENCE ROAM stations * 50
 
@@ -18,8 +28,8 @@
 * PRINT i_have_arrived FROM BEGINNING;
 
 CREATE STREAM i_have_arrived_src (	id STRING,
-							 		time STRING,
-							 		fields STRUCT<route INT>,
+							time STRING,
+							fields STRUCT<route INT>,
 			                 		nearby STRUCT<
 				                    	  	key STRING,
 				                      	  	id STRING,
@@ -45,8 +55,16 @@ CREATE STREAM on_route AS SELECT fields->route AS ROUTE, mystringtoint(nearby->i
 * http sink:8080/train-stations/meta-data
 * http --follow 3e8d4238240f:8080/train-stations/data/1
 
+## TODO
+* make some data structures time-based (on_route and sink)
+* simplify setup by adding docker-compose instructions 
+* use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
+* make train simulator of wellington
+* tune partitions
+* compile services to executables and 'sync' with partitions
+* tests
 
-### USEFUL LINKS
+## Useful Resoures
 * https://lordofthejars.github.io/quarkus-cheat-sheet/
 * https://www.udemy.com/course/java-application-performance-and-memory-management/
 * https://www.udemy.com/course/a-comprehensive-introduction-to-java-virtual-machine-jvm/
@@ -80,3 +98,7 @@ CREATE STREAM on_route AS SELECT fields->route AS ROUTE, mystringtoint(nearby->i
 * https://medium.com/@jponge/the-graalvm-frenzy-f54257f5932c
 * https://hackernoon.com/why-the-java-community-should-embrace-graalvm-abd3ea9121b5
 * https://chrisseaton.com/truffleruby/tenthings/
+
+## Disclaimer
+
+This repo is honoured to be forked. If you encounter any difficulties running it, and believe me you will (at this stage), let me know and I'll try to help you out.
