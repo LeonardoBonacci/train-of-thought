@@ -8,7 +8,7 @@ The unconventional and unprofessional (kafka topic, mvn module, and class) names
 
 ## Inner Workings
 
-![flow diagram](pictures/trains-data-flow.jpg)
+![flow diagram](pictures/trains-data-flows.jpg)
 <add links to separate readme files>
 * source 
 * kafka connector
