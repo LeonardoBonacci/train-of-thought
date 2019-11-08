@@ -10,15 +10,14 @@ The unconventional and unprofessional (kafka topic, mvn module, and class) names
 
 ![flow diagram](pictures/trains-data-flows.jpg)
 <add links to separate readme files>
-* source 
-* kafka connector
-* KSQL queries
-* exploder
-* on-my-way
-* predictor
-* station-sink
-* arrival-processor
-* average-aggregator	
+* [source](source/README.md)
+* [kafka connector](https://github.com/LeonardoBonacci/kafka-connect-tile38-sink/blob/master/README.md)
+* [KSQL queries](ksql/README.md)
+* [exploder](exploder/README.md)
+* [predictor](predictor/README.md)
+* [station-sink](station-sink/README.md)
+* [arrival-processor](arrival-processor/README.md)
+* [averager](averager/README.md)
 	
 ## Custom Kafka Connector
 Use these configuration ....
