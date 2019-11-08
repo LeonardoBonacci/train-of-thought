@@ -18,6 +18,11 @@ The unconventional and unprofessional (kafka topic, mvn module, and class) names
 * arrival-processor
 * average-aggregator	
 	
+## Custom Kafka Connector
+Use these configuration ....
+Go to localhost:3030 - Connectors etc., check  logs and topics
+Sometimes it's necessary to restart 'source' after you've first setup the connectors. This in order to read the stations topic from the beginning.
+	
 ## Run Me
 * docker run --net=host -it tile38/tile38 tile38-cli
 * SETHOOK trains_at_stations kafka://host.docker.internal:9092/I_HAVE_ARRIVED NEARBY trains FENCE ROAM stations * 50

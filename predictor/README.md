@@ -1,4 +1,12 @@
-## COMMANDS
+## The Time Predictor
+
+Incoming:
+* information of the average time it takes for a train on a route to drive from a location to a station
+* train event for every station on its route 
+Outgoing:
+* train events with estimated time-to-station information
+
+
 clear ; mvn clean package ; docker-compose -f .\docker-compose-predictor.yaml up --build
 clear ; docker run --tty --rm -i --network ks debezium/tooling:1.0
 
