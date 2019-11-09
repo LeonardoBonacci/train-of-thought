@@ -8,5 +8,5 @@ import lombok.ToString;
 public class OnRoute {
 
 	public int ROUTE;
-    public int station;
+    public int STATION;
 }

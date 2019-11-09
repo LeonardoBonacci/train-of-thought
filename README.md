@@ -21,8 +21,9 @@ The unconventional and unprofessional (kafka topic, mvn module, and class) names
 	
 ## Custom Kafka Connector
 Use these configuration ....
-Go to localhost:3030 - Connectors etc., check  logs and topics
-Sometimes it's necessary to restart 'source' after you've first setup the connectors. This in order to read the stations topic from the beginning.
+* Go to localhost:3030 - Connectors etc., check  logs and topics
+* Sometimes it's necessary to restart 'source' after you've first setup the connectors. This in order to read the stations topic from the beginning.
+* docker-compose stop source ; docker-compose start source
 	
 ## Run Me
 * docker run --net=host -it tile38/tile38 tile38-cli
@@ -33,7 +34,7 @@ Sometimes it's necessary to restart 'source' after you've first setup the connec
 * SET 'ksql.sink.partitions'='1';
 * PRINT i_have_arrived FROM BEGINNING;
 
-CREATE STREAM i_have_arrived_src (	id STRING,
+CREATE STREAM i_have_arrived_src (id STRING,
 							time STRING,
 							fields STRUCT<route INT>,
 			                 		nearby STRUCT<
@@ -43,15 +44,15 @@ CREATE STREAM i_have_arrived_src (	id STRING,
 				                      		meters INT>)
         WITH (KAFKA_TOPIC='I_HAVE_ARRIVED', VALUE_FORMAT='JSON');
 
-CREATE STREAM i_am_home AS 	SELECT ID, time as "moment", mystringtoint(nearby->id) as "station" 
+CREATE STREAM i_am_home AS 	SELECT id, time as moment, mystringtoint(nearby->id) as station 
 						 	FROM i_have_arrived_src 
 						 	WHERE nearby IS NOT NULL 
-						 	PARTITION BY ID;
+						 	PARTITION BY id;
 
-CREATE STREAM on_route AS SELECT fields->route AS ROUTE, mystringtoint(nearby->id) AS "station" 
+CREATE STREAM on_route AS SELECT fields->route AS route, mystringtoint(nearby->id) AS station 
 							FROM i_have_arrived_src 
 						 	WHERE nearby IS NOT NULL
-						 	PARTITION BY ROUTE;
+						 	PARTITION BY route;
 
 * If all services are running and your laptop can handle a bit more, launch two sink container to check out the load balancing
 * docker-compose stop sink
@@ -59,10 +60,10 @@ CREATE STREAM on_route AS SELECT fields->route AS ROUTE, mystringtoint(nearby->i
 * Now query the REST endpoint, first to find the machine name, then to query the data:
 * docker run --tty --rm -i --network ks debezium/tooling:1.0
 * http sink:8080/train-stations/meta-data
-* http --follow 3e8d4238240f:8080/train-stations/data/1
+* http --follow 96b52c724a8d:8080/train-stations/data/1
+* or, forget about the scaling and just run http sink:8080/train-stations/data/1
 
 ## TODO
-* make some data structures time-based (on_route and sink)
 * simplify setup by adding docker-compose instructions 
 * use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
 * make train simulator of wellington

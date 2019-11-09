@@ -1,5 +1,6 @@
 package guru.bonacci.trains.sink.streams;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,10 +11,13 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
+import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.apache.kafka.streams.state.ReadOnlyWindowStore;
 import org.apache.kafka.streams.state.StreamsMetadata;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import com.google.common.collect.Streams;
 
 import guru.bonacci.trains.sink.model.StationAggr;
 import guru.bonacci.trains.sink.model.StationData;
@@ -57,7 +61,10 @@ public class InteractiveQueries {
         }
         else if (metadata.host().equals(host)) {
             log.info("Found data for key {} locally", id);
-            StationAggr result = getStationStore().get(id);
+            
+            // for demo purposes we take query the last few seconds of several windows 
+            KeyValueIterator<Long, StationAggr> result1 = getStationStore().fetch(id, Instant.now().minusSeconds(2), Instant.now());
+            StationAggr result = Streams.stream(result1).map(keyValue -> keyValue.value).reduce(new StationAggr(), StationAggr::merge);
 
             if (result != null) {
                 return StationDataResult.found(StationData.from(result));
@@ -72,10 +79,10 @@ public class InteractiveQueries {
         }
     }
 
-    private ReadOnlyKeyValueStore<Integer, StationAggr> getStationStore() {
+    private ReadOnlyWindowStore<Integer, StationAggr> getStationStore() {
         while (true) {
             try {
-                return streams.store(SinkTopologyProducer.STATIONS_STORE, QueryableStoreTypes.keyValueStore());
+                return streams.store(SinkTopologyProducer.STATIONS_STORE, QueryableStoreTypes.windowStore());
             } catch (InvalidStateStoreException e) {
                 // ignore, store not ready yet
             }

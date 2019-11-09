@@ -10,6 +10,6 @@ import lombok.ToString;
 public class ArrivalAt {
 
     public String ID;
-    public Instant moment;
-    public int station;
+    public Instant MOMENT;
+    public int STATION;
 }

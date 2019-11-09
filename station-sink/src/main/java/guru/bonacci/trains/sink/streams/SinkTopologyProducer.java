@@ -1,5 +1,7 @@
 package guru.bonacci.trains.sink.streams;
 
+import java.time.Duration;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
@@ -10,18 +12,17 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Printed;
-import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
+import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.state.Stores;
+import org.apache.kafka.streams.state.WindowBytesStoreSupplier;
 
 import guru.bonacci.trains.sink.model.HomewardTrain;
 import guru.bonacci.trains.sink.model.IncomingTrainAtStation;
 import guru.bonacci.trains.sink.model.Station;
 import guru.bonacci.trains.sink.model.StationAggr;
 import io.quarkus.kafka.client.serialization.JsonbSerde;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
 @ApplicationScoped
 public class SinkTopologyProducer {
 
@@ -40,7 +41,12 @@ public class SinkTopologyProducer {
         JsonbSerde<IncomingTrainAtStation> incomingTrainSerde = new JsonbSerde<>(IncomingTrainAtStation.class);
         JsonbSerde<StationAggr> aggregationSerde = new JsonbSerde<>(StationAggr.class);
         
-        KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(STATIONS_STORE);
+        // for demo purposes we retain 3 windows of one second 
+        WindowBytesStoreSupplier storeSupplier = 
+        		Stores.persistentWindowStore(	STATIONS_STORE, 
+								        		Duration.ofSeconds(3), 
+								        		Duration.ofSeconds(1), 
+								        		false);
 
         GlobalKTable<Integer, Station> stations = builder.globalTable(
                 STATIONS_TOPIC,
@@ -57,15 +63,14 @@ public class SinkTopologyProducer {
                     (train, station) -> new IncomingTrainAtStation(train, station)
             )
             .groupByKey(Grouped.with(Serdes.Integer(), incomingTrainSerde))
+            .windowedBy(TimeWindows.of(Duration.ofSeconds(1)))
             .aggregate( // aggregate by stationId
                     StationAggr::new,
                     (stationId, value, aggregation) -> aggregation.updateFrom(value),
                     Materialized.<Integer, StationAggr> as(storeSupplier)
                         .withKeySerde(Serdes.Integer())
                         .withValueSerde(aggregationSerde)
-            )
-            .toStream()
-            .print(Printed.toSysOut());
+            );
 
         return builder.build();
     }

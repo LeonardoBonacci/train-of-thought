@@ -53,10 +53,10 @@ public class ArrivalTopologyProducer {
                 (train, atStation) -> {
         			log.info("{} needs {} ms from [{},{}] until station {}", 
         					train.name, 
-        					Duration.between(train.moment, atStation.moment).toMillis(),
+        					Duration.between(train.moment, atStation.MOMENT).toMillis(),
         					train.lat,
         					train.lon,
-        					atStation.station);
+        					atStation.STATION);
 
         			return FutureArrival.builder()
         									.id(train.id)
@@ -64,8 +64,8 @@ public class ArrivalTopologyProducer {
         									.name(train.name)
         									.lat(train.lat)
         									.lon(train.lon)
-        									.togo(Duration.between(train.moment, atStation.moment).toMillis())
-        									._goto(atStation.station)
+        									.togo(Duration.between(train.moment, atStation.MOMENT).toMillis())
+        									._goto(atStation.STATION)
         									.build();
 
                 },

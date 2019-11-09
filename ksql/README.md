@@ -30,7 +30,7 @@ PRINT 'I_HAVE_ARRIVED' FROM BEGINNING;
 
 CREATE STREAM i_have_arrived_src (	id STRING,
 							 		time STRING,
-							 		fields STRUCT<route INT>,
+							 		fields STRUCT<route INTEGER>,
 			                 		nearby STRUCT<
 				                    	  	key STRING,
 				                      	  	id STRING,

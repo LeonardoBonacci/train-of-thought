@@ -16,7 +16,7 @@ public class Route {
 
     public Route updateFrom(OnRoute incoming) {
         route = incoming.ROUTE;
-        stations.add(incoming.station);
+        stations.add(incoming.STATION);
         
         return this;
     }

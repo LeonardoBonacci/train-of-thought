@@ -64,7 +64,7 @@ public class Simulator {
 
 	@Outgoing("I_AM_HERE")
 	public Flowable<KafkaMessage<String, String>> trainEvents() {
-		return Flowable.interval(500, TimeUnit.MILLISECONDS).onBackpressureDrop().map(tick -> {
+		return Flowable.interval(1000, TimeUnit.MILLISECONDS).onBackpressureDrop().map(tick -> {
 			Train train = moveAhead(trains.get(new Random().nextInt(trains.size())));
 			
 			if (train.lat > END_LAT || train.lon < train.lon)
