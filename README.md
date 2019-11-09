@@ -1,23 +1,29 @@
 # Train of Thought
-Named after the brilliant lumosity game.
+*Named after the brilliant lumosity game.*
 
-<what it does - what it contributes to mankind>. It is a simple programming experiment with as underlying purpose to show (to anyone who'd like to see) how we can transform and manipulate data (streams) into useful and thus valuable information. For this reason, and to allow it to coordinate any transportation monitoring system without complex interfacing, only a minimum (too little really) of input data is required for it to function: train and stations; even the train routs are deduced! Its architecture is highly scalable, and with the right ops-people it could monitor the entire public transportation system of any country.  
+Is every problem in itself actually a small solution and does every solution carry in itself the seed of a problem? Is there always a bit of Yin in the Yang and Yang in the Yin? 
+
+Technology ought to solve a problem, even the smallest human struggle. If it does without creating another bigger one it has the right to exist. Have you ever seen people running for the train, in unconfortable shoes, working clothes or unsuitable bodies, to then arrive at the station and find out that the train arrives a bit later today. I see it all the time, and actually, I am one of them. Someone should take care of this, right? It has become an international difficulty that contemporary man encounters daily. Why can we not sync our own movement (changing geo-location) with public transportation movement (also changing geo-location)? Well, in fact we can, and this repo solves the first half of the puzzle. Requirement is the amendement of equal rights; we do so without complicated system interfacing in order to create an utmost generic system that can run/be implemented in any place at any time (it also works for buses). 
+
+It also is a simple programming experiment with as underlying purpose to show (to anyone who'd like to see) how we can transform and manipulate data (streams) into useful and thus valuable information. For this reason, and to allow it to coordinate any transportation monitoring system without complex interfacing, only a minimum (too little really) of input data is required for it to function: train and stations; even the train routs are deduced! Its architecture is highly scalable, and with the right ops-people it could monitor the entire public transportation system of any country.  
 
 The unconventional and unprofessional (kafka topic, mvn module, and class) names are chosen to facilitate communicating the app's inner workings to my wife :) 
 
 
 ## Inner Workings
 
+A picture says more than...
+
 ![flow diagram](pictures/trains-data-flows.jpg)
-<add links to separate readme files>
-* [source](source/README.md)
-* [kafka connector](https://github.com/LeonardoBonacci/kafka-connect-tile38-sink/blob/master/README.md)
-* [KSQL queries](ksql/README.md)
-* [exploder](exploder/README.md)
-* [predictor](predictor/README.md)
-* [station-sink](station-sink/README.md)
-* [arrival-processor](arrival-processor/README.md)
-* [averager](averager/README.md)
+
+The basic idea is explained with the thick arrowed flow. Each train regularly sends out a message with it's location ([source](source/README.md)). When we split such a message to create a similar one for each station on its route ([exploder](exploder/README.md)) we are ready to add arrival time predictions ([predictor](predictor/README.md)). Without predictions for negative arrival times of passed stations, we end up with each train telling in how much time it will presumably arrive at what station ([station-sink](station-sink/README.md)).   
+
+Question: how do we know the arrival time from a location to a station? Answer: by experience. [Tile38](https://github.com/LeonardoBonacci/kafka-connect-tile38-sink/blob/master/README.md) does the hard work and 'detects' each time some train comes within the range of some station. Knowing this, and with the help of some [KSQL](ksql/README.md) glue, we combine a train-event with time and geo information with an arrival message at the station in the [arrival-processor](arrival-processor/README.md) service. Kafka-streams windowed joins do an excellent job here  (https://kafka.apache.org/20/documentation/streams/developer-guide/dsl-api.html#kstream-kstream-join). The time difference is how long it actually took the train to arrive from its location to a station. 
+
+Last step is to make predictions. For demo purposes we simply take the average ariving time from a location to a station ([averager](averager/README.md)). It should not be hard to come up with something more intelligent. We do need to do some extra work though. There will be way too many lat-lon combinations to make the average value a valuable one. Therefore, let us normalize the location with a [GeoHash](https://en.wikipedia.org/wiki/Geohash) so that approximations becomes useable. 
+
+Voilà, we have a working and streaming processor topology!!
+
 	
 ## Custom Kafka Connector
 Use these configuration ....
