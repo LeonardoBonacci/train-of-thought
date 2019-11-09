@@ -62,7 +62,8 @@ public class InteractiveQueries {
         else if (metadata.host().equals(host)) {
             log.info("Found data for key {} locally", id);
             
-            // for demo purposes we take query the last few seconds of several windows 
+            // for demo purposes we query the last three seconds (of several windows)
+            // this way trains don't cling to stations when they have passed
             KeyValueIterator<Long, StationAggr> result1 = getStationStore().fetch(id, Instant.now().minusSeconds(2), Instant.now());
             StationAggr result = Streams.stream(result1).map(keyValue -> keyValue.value).reduce(new StationAggr(), StationAggr::merge);
 

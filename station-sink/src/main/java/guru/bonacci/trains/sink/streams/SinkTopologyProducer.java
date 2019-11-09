@@ -41,10 +41,10 @@ public class SinkTopologyProducer {
         JsonbSerde<IncomingTrainAtStation> incomingTrainSerde = new JsonbSerde<>(IncomingTrainAtStation.class);
         JsonbSerde<StationAggr> aggregationSerde = new JsonbSerde<>(StationAggr.class);
         
-        // for demo purposes we retain 3 windows of one second 
+        // for demo purposes we retain five windows of one second 
         WindowBytesStoreSupplier storeSupplier = 
         		Stores.persistentWindowStore(	STATIONS_STORE, 
-								        		Duration.ofSeconds(3), 
+								        		Duration.ofSeconds(5), 
 								        		Duration.ofSeconds(1), 
 								        		false);
 

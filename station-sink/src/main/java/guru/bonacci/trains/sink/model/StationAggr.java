@@ -29,6 +29,7 @@ public class StationAggr {
 		stationId = other.stationId;
 		stationName = other.stationName;
 
+		// train arrival values are automatically updated here
 		trains.putAll(other.trains);
 
 		return this;
