@@ -102,7 +102,6 @@ CREATE STREAM on_route AS SELECT fields->route AS route, mystringtoint(nearby->i
 
 ## TODO
 * simplify setup by adding docker-compose instructions 
-* use KTable instead of GlobalKTable in 'station-sink' and 'predictor' services
 * make train simulator of wellington
 * tune partitions
 * compile services to executables and 'sync' with partitions

@@ -7,7 +7,8 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.GlobalKTable;
+import org.apache.kafka.streams.kstream.Joined;
+import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Produced;
 
 import com.github.davidmoten.geo.GeoHash;
@@ -26,6 +27,7 @@ public class PredictorTopologyProducer {
 	private static final String TIME_PREDICTIONS_TOPIC = "SO_LONG";
     private static final String HOMEWARD_TOPIC = "HOMEWARD_BOUND";
     
+    
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
@@ -34,10 +36,10 @@ public class PredictorTopologyProducer {
         JsonbSerde<WayTrain> waySerde = new JsonbSerde<>(WayTrain.class);
         JsonbSerde<HomewardTrain> homewardSerde = new JsonbSerde<>(HomewardTrain.class);
 
-        //TODO this should be a KTable
-        GlobalKTable<String, SoLongTrain> predictions = builder.globalTable(
+        KTable<String, SoLongTrain> predictions = builder.table(
         		TIME_PREDICTIONS_TOPIC,
                 Consumed.with(Serdes.String(), predictionsSerde));
+
 
         builder.stream(
                 LIVE_TRAINS_TOPIC,
@@ -48,8 +50,8 @@ public class PredictorTopologyProducer {
 							    			GeoHash.encodeHash(value.lat, value.lon, 7), 
 							    			value._goto))
         	.join(predictions, 
-        		 (trainId, train) -> trainId, 
-        		 (train, prediction) -> new HomewardTrain(train.id, train.route, train.name, prediction.avg, train._goto)
+        		 (train, prediction) -> new HomewardTrain(train.id, train.route, train.name, prediction.avg, train._goto),
+        		 Joined.with(Serdes.String(), waySerde, predictionsSerde)
         	)
         	.selectKey((k,train) -> train.id)
         	.peek((k,v) -> log.info(k + " >>> " + v))
