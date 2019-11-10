@@ -27,7 +27,38 @@ And voilà, we have a streaming processor topology!!
 	
 ## Custom Kafka Connector
 Use these configuration ....
-* Go to localhost:3030 - Connectors etc., check  logs and topics
+* Go to localhost:3030 - choose connectors 
+* Create two Tile38SinkConnectors with the following configuration properties:
+```
+name=Tile38SinkTrains
+topics=I_AM_HERE
+tasks.max=1
+connector.class=guru.bonacci.kafka.connect.Tile38SinkConnector
+tile38.url=tile38
+tile38.port=9851
+key.name=trains
+object.type=POINT
+optional.field.name=route
+key.converter.schemas.enable=false
+key.converter=org.apache.kafka.connect.storage.StringConverter
+value.converter.schemas.enable=false
+value.converter=org.apache.kafka.connect.storage.StringConverter
+```
+and 
+```
+name=Tile38SinkStations
+topics=STATIONS
+tasks.max=1
+connector.class=guru.bonacci.kafka.connect.Tile38SinkConnector
+tile38.url=tile38
+tile38.port=9851
+key.name=stations
+object.type=POINT
+key.converter.schemas.enable=false
+key.converter=org.apache.kafka.connect.storage.StringConverter
+value.converter.schemas.enable=false
+value.converter=org.apache.kafka.connect.storage.StringConverter
+```
 * Sometimes it's necessary to restart 'source' after you've first setup the connectors. This in order to read the stations topic from the beginning.
 * docker-compose stop source ; docker-compose start source
 	
