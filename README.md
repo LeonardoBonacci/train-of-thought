@@ -63,9 +63,6 @@ value.converter=org.apache.kafka.connect.storage.StringConverter
 * docker-compose stop source ; docker-compose start source
 	
 ## Run Me
-* docker run --net=host -it tile38/tile38 tile38-cli
-* SETHOOK trains_at_stations kafka://host.docker.internal:9092/I_HAVE_ARRIVED NEARBY trains FENCE ROAM stations * 50
-
 * docker-compose exec ksql-cli ksql http://ksql-server:8088
 * SET 'auto.offset.reset'='earliest';
 * SET 'ksql.sink.partitions'='1';
@@ -108,6 +105,7 @@ CREATE STREAM on_route AS SELECT fields->route AS route, mystringtoint(nearby->i
 * tests
 
 ## Useful Resoures
+* https://debezium.io/blog/2019/10/01/audit-logs-with-change-data-capture-and-stream-processing/
 * https://lordofthejars.github.io/quarkus-cheat-sheet/
 * https://www.udemy.com/course/java-application-performance-and-memory-management/
 * https://www.udemy.com/course/a-comprehensive-introduction-to-java-virtual-machine-jvm/

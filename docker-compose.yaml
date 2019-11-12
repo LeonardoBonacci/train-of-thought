@@ -1,4 +1,4 @@
-version: '3.5'
+version: '2.1'
 
 services:
   kafka-cluster:
@@ -45,6 +45,18 @@ services:
     image: tile38/tile38
     ports:
       - "9851:9851"
+    networks:
+      - kafkastreams-network
+
+  tile38-cli:
+    image: tile38/tile38
+    depends_on:
+      tile38:
+        condition: service_started
+    volumes:
+    - "./tile38/init.sh:/usr/local/bin/custom-init.sh"
+    command: 
+    - ./usr/local/bin/custom-init.sh    
     networks:
       - kafkastreams-network
 
